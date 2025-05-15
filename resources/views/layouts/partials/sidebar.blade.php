@@ -9,13 +9,16 @@
     ];
 @endphp
 
-
-<div class="z-50 w-64 bg-[#FFEBFA] transition duration-300 ease-in-out transform shadow-[#FFEBFA] shadow-2xl ">
+<div id="sidebar" class="z-50 lg:w-64 bg-[#FFEBFA] shadow-[#FFEBFA] shadow-2xl">
     {{-- logo --}}
-    <div class="flex flex-1 py-10 px-5">
-        <div class="flex flex-row text-3xl">
+    <div class="flex flex-1 flex-col py-10 px-5 gap-3 align-center">
+        <div class="hidden flex-row text-3xl lg:flex">
             <p>Ticket</p>
             <p class="font-extrabold">Book</p>
+        </div>
+        <div class="flex flex-1 justify-center flex-row text-3xl lg:hidden">
+            <p>T</p>
+            <p class="font-extrabold">B</p>
         </div>
     </div>
 
@@ -24,11 +27,35 @@
         <ul class="flex flex-1 flex-col gap-2">
             @foreach ($navItems as $item)
                 <li class="flex flex-row gap-1 cursor-pointer hover:bg-[#D7C1D3] py-3 px-2 rounded-sm">
-                    @svg($item['icon'], 'mr-3 h-5 w-5 flex-shrink-0')
-
-                    <div>{{ $item['name'] }}</div>
+                    @svg($item['icon'], 'h-5 w-5 flex-shrink-0')
+                    <div class="hidden lg:flex">{{ $item['name'] }}</div>
                 </li>
             @endforeach
         </ul>
     </div>
 </div>
+
+<div>
+    <div id="toggleButton"
+        class="flex aligin-items-center my-48 lg:hidden bg-[#FFEBFA] p-5 absolute rounded-r-2xl cursor-pointer">
+        @svg('heroicon-o-arrow-right-circle', 'icon-toggle h-5 w-5 flex-shrink-0 transition-transform duration-300')
+    </div>
+</div>
+
+<script>
+    const toggleButton = document.getElementById('toggleButton');
+    const sidebar = document.getElementById('sidebar');
+    const iconToggle = document.querySelector('.icon-toggle');
+
+    toggleButton.addEventListener('click', () => {
+        sidebar.classList.toggle('lg:w-64');
+        sidebar.classList.toggle('lg:w-16');
+
+
+        iconToggle.classList.toggle('rotate-180');
+
+        sidebar.querySelectorAll('ul li div').forEach(el => {
+            el.classList.toggle('hidden');
+        });
+    });
+</script>
