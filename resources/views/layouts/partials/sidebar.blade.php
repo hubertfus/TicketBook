@@ -4,7 +4,7 @@
         ['name' => 'Transactions', 'route' => 'admin.dashboard', 'icon' => 'heroicon-m-arrows-right-left'],
         ['name' => 'Reports', 'route' => 'admin.dashboard', 'icon' => 'heroicon-o-document-text'],
         ['name' => 'Users', 'route' => 'admin.dashboard', 'icon' => 'heroicon-o-users'],
-        ['name' => 'Events', 'route' => 'admin.dashboard', 'icon' => 'heroicon-o-calendar-days'],
+        ['name' => 'Events', 'route' => 'admin.events', 'icon' => 'heroicon-o-calendar-days'],
         ['name' => 'Support', 'route' => 'admin.dashboard', 'icon' => 'heroicon-o-chat-bubble-left-right'],
     ];
 @endphp
@@ -27,8 +27,10 @@
         <ul class="flex flex-1 flex-col gap-2">
             @foreach ($navItems as $item)
                 <li class="flex flex-row gap-1 cursor-pointer hover:bg-[#D7C1D3] py-3 px-2 rounded-sm">
-                    @svg($item['icon'], 'h-5 w-5 flex-shrink-0')
-                    <div class="hidden lg:flex">{{ $item['name'] }}</div>
+                    <a href="{{ route($item['route']) }}" class="flex flex-row gap-2 items-center w-full">
+                        @svg($item['icon'], 'h-5 w-5 flex-shrink-0')
+                        <div class="hidden lg:flex">{{ $item['name'] }}</div>
+                    </a>
                 </li>
             @endforeach
         </ul>
@@ -37,7 +39,7 @@
 
 <div>
     <div id="toggleButton"
-        class="flex aligin-items-center my-48 lg:hidden bg-[#FFEBFA] p-5 absolute rounded-r-2xl cursor-pointer">
+        class="flex aligin-items-center my-48 lg:hidden bg-[#FFEBFA] py-5 px-2 absolute rounded-r-2xl cursor-pointer shadow-2xl shadow-[#6B4E71]">
         @svg('heroicon-o-arrow-right-circle', 'icon-toggle h-5 w-5 flex-shrink-0 transition-transform duration-300')
     </div>
 </div>
