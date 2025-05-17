@@ -19,6 +19,10 @@
                 <input type="time" name="time" class="w-full border rounded p-2" required>
             </div>
             <div class="mb-4">
+                <label class="block">Type</label>
+                <input type="text" name="type" class="w-full border rounded p-2" required>
+            </div>
+            <div class="mb-4">
                 <label class="block">Description</label>
                 <textarea name="description" class="w-full border rounded p-2" required></textarea>
             </div>

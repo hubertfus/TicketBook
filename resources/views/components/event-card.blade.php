@@ -23,6 +23,12 @@
         <p class="text-sm text-[#3A4454]">{{ $event->time }}</p>
     </div>
 
+    {{-- type --}}
+    <div class="flex gap-1 flex-row">
+        <label class="block text-sm font-medium">@svg('heroicon-o-fire', 'h-5 w-5 flex-shrink-0') </label>
+        <p class="text-sm text-[#3A4454]">{{ $event->type }}</p>
+    </div>
+
     {{-- venue --}}
     <div class="flex gap-1 flex-row">
         <label class="block text-sm font-medium">@svg('heroicon-o-map-pin', 'h-5 w-5 flex-shrink-0') </label>

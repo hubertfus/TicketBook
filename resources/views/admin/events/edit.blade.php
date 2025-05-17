@@ -23,6 +23,10 @@
                     class="w-full border rounded p-2" required>
             </div>
             <div class="mb-4">
+                <label class="block">Type</label>
+                <input type="text" name="type" value="{{ $event->type }}" class="w-full border rounded p-2" required>
+            </div>
+            <div class="mb-4">
                 <label class="block">Description</label>
                 <textarea name="description" class="w-full border rounded p-2" required>{{ $event->description }}</textarea>
             </div>
@@ -46,7 +50,8 @@
             </div>
             <div class="mb-4">
                 <label class="block">Venue</label>
-                <input type="text" name="venue" value="{{ $event->venue }}" class="w-full border rounded p-2" required>
+                <input type="text" name="venue" value="{{ $event->venue }}" class="w-full border rounded p-2"
+                    required>
             </div>
 
             <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded">Update Event</button>
