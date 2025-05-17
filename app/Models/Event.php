@@ -13,6 +13,7 @@ class Event extends Model
         'title',
         'date',
         'time',
+        'type',
         'description',
         'image',
         'totalTickets',
