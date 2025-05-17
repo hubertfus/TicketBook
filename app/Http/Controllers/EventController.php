@@ -8,10 +8,26 @@ use Illuminate\Http\Request;
 class EventController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $events = Event::all();
-        return view('admin.events', compact('events'));
+        $query = Event::query();
+
+        if ($request->filled('date')) {
+            $query->whereDate('date', $request->input('date'));
+        }
+
+        if ($request->filled('venue')) {
+            $query->where('venue', 'like', '%' . $request->input('venue') . '%');
+        }
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->input('type'));
+        }
+
+        $events = $query->latest()->paginate(10);
+        $types = Event::select('type')->distinct()->pluck('type');
+
+        return view('admin.events', compact('events', 'types'));
     }
     public function create()
     {
