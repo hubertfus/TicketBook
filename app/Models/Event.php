@@ -13,15 +13,22 @@ class Event extends Model
         'organizer',
         'title',
         'description',
-        'start_time',
+        'date',
+        'time',
         'location',
         'type',
-        'last_minute'
+        'last_minute',
+        'totalTickets',
+        'ticketSold',
+        'image'
     ];
 
     protected $casts = [
-        'start_time' => 'datetime',
-        'last_minute' => 'boolean'
+        'date' => 'date',
+        'time' => 'datetime:H:i',
+        'last_minute' => 'boolean',
+        'totalTickets' => 'integer',
+        'ticketSold' => 'integer',
     ];
 
     /**
