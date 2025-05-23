@@ -16,10 +16,14 @@ return new class extends Migration
             $table->string('organizer');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->dateTime('start_time');
+            $table->date('date');
+            $table->time('time');
             $table->string('location');
             $table->enum('type',['concert','sport','standup','festival','other']);
             $table->boolean('last_minute')->default(false);
+            $table->integer('totalTickets');
+            $table->integer('ticketSold')->default(0);
+            $table->string('image');
             $table->timestamps();
         });
     }

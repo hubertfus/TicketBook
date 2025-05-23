@@ -52,6 +52,7 @@ call php artisan key:generate
 REM Uruchamianie migracji
 echo Uruchamianie migracji...
 call php artisan migrate
+call php artisan db:seed
 
 REM Uruchamianie serwera
 echo Start serwera aplikacji...
