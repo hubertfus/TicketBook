@@ -3,6 +3,16 @@
 @section('title', 'Home')
 
 @section('content')
+
+    @if (session('status'))
+    <div id="login-status"
+         class="flex justify-center mt-6 transition-opacity duration-500">
+        <div class="bg-green-100 text-green-800 px-6 py-4 rounded-lg shadow-md text-center text-sm sm:text-base font-semibold max-w-xl w-full">
+            {{ session('status') }}
+        </div>
+    </div>
+    @endif
+
     <div class="relative flex flex-col lg:flex-row h-full bg-white/90 lg:bg-transparent">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-10 lg:gap-20 py-10">
             <div class="lg:w-1/2 flex flex-col justify-center space-y-6 text-center lg:text-left relative z-10">
