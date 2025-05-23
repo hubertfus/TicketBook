@@ -62,7 +62,10 @@
                 Buy ticket
             </a>
 
-            <a href="" class="text-[#6B4E71] text-sm hover:underline hover:font-semibold">View details</a>
+            <a href="{{ route('events.show', $event) }}"
+                class="text-[#6B4E71] text-sm hover:underline hover:font-semibold">
+                View details
+            </a>
         </div>
     @endif
 </div>

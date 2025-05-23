@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
@@ -34,12 +35,22 @@ class EventController extends Controller
         $events = $query->latest()->paginate(10);
         $types = Event::select('type')->distinct()->pluck('type');
 
-        return view('pages.admin.events.index', compact('events', 'types'));
+
+        if (Auth::check() && Auth::user()->role === 'admin')
+            return view('pages.admin.events.index', compact('events', 'types'));
+
+        return view('pages.user.events.index', compact('events', 'types'));
+    }
+
+    public function show(Event $event)
+    {
+        return view('pages.user.events.show', compact('event'));
     }
 
     public function create()
     {
-        return view('pages.admin.events.create');
+        if (Auth::check() && Auth::user()->role === 'admin')
+            return view('pages.admin.events.create');
     }
 
     public function store(Request $request)
@@ -57,13 +68,14 @@ class EventController extends Controller
             'organizer' => 'required|string'
         ]);
         Event::create($validated);
-
-        return redirect()->route('events.index')->with('success', 'Event added!');
+        if (Auth::check() && Auth::user()->role === 'admin')
+            return redirect()->route('events.index')->with('success', 'Event added!');
     }
 
     public function edit(Event $event)
     {
-        return view('pages.admin.events.edit', compact('event'));
+        if (Auth::check() && Auth::user()->role === 'admin')
+            return view('pages.admin.events.edit', compact('event'));
     }
 
     public function update(Request $request, Event $event)
@@ -82,13 +94,14 @@ class EventController extends Controller
         ]);
 
         $event->update($validated);
-
-        return redirect()->route('events.index')->with('success', 'Event updated!');
+        if (Auth::check() && Auth::user()->role === 'admin')
+            return redirect()->route('events.index')->with('success', 'Event updated!');
     }
 
     public function destroy(Event $event)
     {
-        $event->delete();
+        if (Auth::check() && Auth::user()->role === 'admin')
+            $event->delete();
         return redirect()->route('events.index')->with('success', 'Event deleted!');
     }
 }
