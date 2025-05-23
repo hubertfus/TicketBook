@@ -49,4 +49,10 @@
             <x-event-card :event="$event" />
         @endforeach
     </div>
+
+    <div class="w-full flex justify-center mt-6 py-6">
+        <div class="max-w-sm sm:flex sm:flex-col">
+            {{ $events->withQueryString()->links() }}
+        </div>
+    </div>
 @endsection
