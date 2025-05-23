@@ -2,9 +2,38 @@
 
 @section('title', 'Home')
 
+@php
+    $filters = [
+        [
+            'name' => 'title',
+            'type' => 'text',
+            'placeholder' => 'Title',
+            'icon' => 'heroicon-o-information-circle',
+        ],
+        [
+            'name' => 'location',
+            'type' => 'text',
+            'placeholder' => 'City',
+            'icon' => 'heroicon-o-map-pin',
+        ],
+        [
+            'name' => 'date',
+            'type' => 'date',
+            'icon' => 'heroicon-o-calendar',
+        ],
+        [
+            'name' => 'type',
+            'type' => 'select',
+            'label' => 'Event type',
+            'options' => ['concert', 'sport', 'standup', 'festival', 'other'],
+            'icon' => 'heroicon-o-tag',
+        ],
+    ];
+@endphp
+
 @section('content')
-    <div class="relative flex flex-col lg:flex-row h-full bg-white/90 lg:bg-transparent">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-10 lg:gap-20 py-10">
+    <div class="relative flex justify-center flex-col lg:flex-row h-full bg-[#FFF7FD] lg:bg-transparent">
+        <div class=" px-4 sm:px-6 lg:px-0 flex flex-col lg:flex-row gap-10 lg:gap-20 py-10">
             <div class="lg:w-1/2 flex flex-col justify-center space-y-6 text-center lg:text-left relative z-10">
                 <small class="text-gray-500 font-medium text-sm md:text-base">
                     Rozrywka na wyciągnięcie ręki – znajdź coś dla siebie
@@ -39,8 +68,8 @@
 
     <div class="w-full relative z-20" style="background: linear-gradient(to bottom, transparent 50%, #FFEBFA 50%);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-            <div class="max-w-4xl w-full relative z-20 mx-auto">
-                @include('components.searchbar')
+            <div class="w-full relative z-20">
+                <x-searchbar :filters="$filters" :action="route('events.index')" />
             </div>
         </div>
     </div>
