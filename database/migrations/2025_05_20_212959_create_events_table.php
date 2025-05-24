@@ -19,11 +19,11 @@ return new class extends Migration
             $table->date('date');
             $table->time('time');
             $table->string('location');
-            $table->enum('type',['concert','sport','standup','festival','other']);
+            $table->enum('type', ['concert', 'sport', 'standup', 'festival', 'other']);
             $table->boolean('last_minute')->default(false);
             $table->integer('totalTickets');
             $table->integer('ticketSold')->default(0);
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

@@ -61,13 +61,19 @@ class EventController extends Controller
             'time' => 'required',
             'type' => 'required|string',
             'description' => 'required',
-            'image' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'totalTickets' => 'required|integer',
             'ticketSold' => 'nullable|integer',
             'location' => 'required|string',
             'organizer' => 'required|string'
         ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('events', 'public');
+        }
+
         Event::create($validated);
+
         if (Auth::check() && Auth::user()->role === 'admin')
             return redirect()->route('events.index')->with('success', 'Event added!');
     }
@@ -86,14 +92,19 @@ class EventController extends Controller
             'time' => 'required',
             'type' => 'required|string',
             'description' => 'required',
-            'image' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'totalTickets' => 'required|integer',
             'ticketSold' => 'nullable|integer',
             'location' => 'required|string',
             'organizer' => 'required|string'
         ]);
 
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('events', 'public');
+        }
+
         $event->update($validated);
+
         if (Auth::check() && Auth::user()->role === 'admin')
             return redirect()->route('events.index')->with('success', 'Event updated!');
     }
