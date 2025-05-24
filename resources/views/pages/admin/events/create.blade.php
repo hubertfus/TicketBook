@@ -14,7 +14,7 @@
     <div class="max-w-xl mx-auto  my-8">
         <h2 class="text-2xl font-bold mb-4">Add New Event</h2>
 
-        <form action="{{ route('events.store') }}" method="POST">
+        <form action="{{ route('events.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-4">
                 <label class="block">Title</label>
@@ -43,9 +43,37 @@
                 <textarea name="description" class="w-full border rounded p-2" required></textarea>
             </div>
             <div class="mb-4">
-                <label class="block">Image URL</label>
-                <input type="text" name="image" class="w-full border rounded p-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Image Upload</label>
+                <input type="file" name="image" accept="image/*"
+                    class="block w-full text-sm text-gray-900 border
+                    border-gray-300 rounded-lg cursor-pointer bg-[#FFEBFA]
+                    focus:outline-none focus:ring-2 focus:ring-[#6B4E71]
+                    focus:border-[#6B4E71] p-2.5 file:mr-4 file:py-2 file:px-4 f
+                    ile:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#6B4E71]
+                    file:text-white hover:file:bg-[#8c6694]s transition"
+                    id="imageInput">
+                <div class="mt-4">
+                    <img id="imagePreview" src="#" alt="Image Preview"
+                        class="hidden w-full h-48 object-cover rounded-md border" />
+                </div>
             </div>
+
+            @push('scripts')
+                <script>
+                    document.getElementById('imageInput').addEventListener('change', function(event) {
+                        const [file] = event.target.files;
+                        const preview = document.getElementById('imagePreview');
+                        if (file) {
+                            preview.src = URL.createObjectURL(file);
+                            preview.classList.remove('hidden');
+                        } else {
+                            preview.src = '#';
+                            preview.classList.add('hidden');
+                        }
+                    });
+                </script>
+            @endpush
+
             <div class="mb-4">
                 <label class="block">Total Tickets</label>
                 <input type="number" name="totalTickets" class="w-full border rounded p-2" required>

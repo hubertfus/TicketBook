@@ -53,6 +53,17 @@ REM Uruchamianie migracji
 echo Uruchamianie migracji...
 call php artisan migrate
 call php artisan db:seed
+call php artisan storage:link
+
+set SOURCE=public\images\placeholder.jpg
+set DEST=public\storage\seedImage.jpg
+
+if exist "%SOURCE%" (
+    copy /Y "%SOURCE%" "%DEST%"
+    echo Plik został skopiowany jako %DEST%
+) else (
+    echo Nie znaleziono pliku źródłowego: %SOURCE%
+)
 
 REM Uruchamianie serwera
 echo Start serwera aplikacji...

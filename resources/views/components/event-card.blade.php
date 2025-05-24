@@ -1,10 +1,18 @@
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 <div class="rounded-lg shadow-md p-6 bg-[#FFEBFA] w-sm space-y-4">
     {{-- image --}}
-    @if ($event->image)
-        <div>
-            <img src="{{ $event->image }}" alt="{{ $event->title }}" class="w-full h-48 object-cover rounded-md">
-        </div>
-    @endif
+    <div>
+        @if ($event->image && Storage::disk('public')->exists($event->image))
+            <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}"
+                class="w-full h-48 object-cover rounded-md">
+        @else
+            <img src="{{ asset('images/placeholder.jpg') }}" alt="{{ $event->title }}"
+                class="w-full h-48 object-cover rounded-md">
+        @endif
+    </div>
 
     {{-- title --}}
     <div class="flex gap-1 flex-row">

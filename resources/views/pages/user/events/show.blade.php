@@ -2,6 +2,10 @@
 
 @section('title', '{{ $event->title }}')
 
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 @section('content')
     <div class="min-h-screen bg-[#FFF7FD] py-10">
         <div class="container mx-auto px-4">
@@ -9,10 +13,16 @@
                 {{-- Image --}}
                 <div class="lg:col-span-1">
                     <div class="rounded-lg overflow-hidden shadow-md">
-                        <img src="{{ $event->image }}" alt="{{ $event->title }}"
-                            class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                        @if ($event->image && Storage::disk('public')->exists($event->image))
+                            <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}"
+                                class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                        @else
+                            <img src="{{ asset('images/placeholder.jpg') }}" alt="{{ $event->title }}"
+                                class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                        @endif
                     </div>
                 </div>
+
 
                 {{-- Event info --}}
                 <div class="lg:col-span-2 flex flex-col justify-between">
