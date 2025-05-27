@@ -16,7 +16,7 @@
         <div
             class="flex flex-wrap items-center gap-4 sm:gap-6 justify-center sm:justify-end flex-shrink-0 w-full sm:w-auto mt-4 sm:mt-0">
             @if (!Auth::check())
-                <a href="#" class="text-black text-xl font-semibold underline hover:no-underline">Zarejestruj
+                <a href="/register" class="text-black text-xl font-semibold underline hover:no-underline">Zarejestruj
                     się</a>
                 <a href="login"
                     class="bg-[#6B4E71] text-xl text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#48354D] transition">Zaloguj
