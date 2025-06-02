@@ -49,9 +49,6 @@
                     Already have an account?
                     <a href="{{ url('/login') }}" class="text-[#6B4E71] hover:underline">Log in</a>
                 </p>
-                <p>
-                    <a href="{{ url('/forgot-password') }}" class="text-[#6B4E71] hover:underline">Forgot your password?</a>
-                </p>
             </div>
         </div>
     </div>
