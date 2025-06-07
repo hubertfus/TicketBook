@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\EventController as AdminEventController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\User\EventController as UserEventController;
 use App\Http\Controllers\TicketPurchaseController;
@@ -23,6 +24,7 @@ Route::middleware(['auth', 'check.roles:admin'])->prefix('admin')->group(functio
     Route::resource('order-items', AdminOrderItemController::class);
     Route::get('/top-up-codes/create', [AdminTopUpController::class, 'create'])->name('admin.topup.create');
     Route::post('/top-up-codes/store', [AdminTopUpController::class, 'store'])->name('admin.topup.store');
+    Route::resource('users', UserController::class);
 });
 
 Route::middleware(['auth', 'check.roles:user'])->group(function () {
