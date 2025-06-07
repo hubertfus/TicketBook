@@ -9,7 +9,7 @@ use App\Http\Controllers\User\OrderController as UserOrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\OrderItemController as AdminOrderItemController;
 use App\Http\Controllers\Admin\RefundController as AdminRefundController;
-
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminTopUpController;
 use App\Http\Controllers\TopUpRedemptionController;
@@ -45,6 +45,8 @@ Route::middleware(['auth', 'check.roles:user'])->group(function () {
     Route::post('/orders/{order}/refund', [UserOrderController::class, 'refund'])->name('orders.refund');
     Route::post('/orders/{order}/refund-request', [UserOrderController::class, 'submitRefundRequest'])->name('orders.refund.request');
 });
+
+Route::post('/events/{event}/add-review', [ReviewController::class, 'store'])->name('reviews.store');
 
 
 Route::get('/events/{event}/buy', [TicketPurchaseController::class, 'create'])->name('tickets.buy');

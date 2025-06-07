@@ -96,8 +96,19 @@ class User extends Authenticatable
         return $query->where('role', 'user');
     }
 
+
     public function topUpCodes()
     {
         return $this->hasMany(TopUpCode::class, 'used_by');
+    }
+    public function hasAttendedEvent($eventId)
+    {
+        return $this->orders()
+            ->where('status', 'paid')
+            ->whereHas('orderItems.ticket', function ($q) use ($eventId) {
+                $q->where('event_id', $eventId);
+            })
+            ->exists();
+
     }
 }

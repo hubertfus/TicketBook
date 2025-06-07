@@ -5,6 +5,8 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Models\OrderItem;
+use App\Models\Review;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
@@ -39,6 +41,25 @@ class EventController extends Controller
 
     public function show(Event $event)
     {
-        return view('pages.user.events.show', compact('event'));
+        $reviews = collect();
+
+                $user = auth()->user();
+        $canReview = false;
+
+        if ($user) {
+            $canReview = OrderItem::whereHas('order', function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                })
+                ->whereHas('ticket', function ($query) use ($event) {
+                    $query->where('event_id', $event->id);
+                })
+                ->exists();
+        }
+
+        if ($event->date->isPast()) {
+            $reviews = $event->reviews()->with('user')->paginate(5);
+        }
+
+        return view('pages.user.events.show', compact('event', 'reviews', 'canReview'));
     }
 }

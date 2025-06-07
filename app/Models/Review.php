@@ -34,14 +34,6 @@ class Review extends Model
     }
 
     /**
-     * Relationship to the event
-     */
-    public function reviews()
-    {
-        return $this->hasMany(Review::class);
-    }
-
-    /**
      * Calculates the average rating of related reviews
      */
     public function getAverageRatingAttribute(): float
