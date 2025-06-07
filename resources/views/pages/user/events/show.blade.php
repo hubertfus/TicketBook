@@ -111,6 +111,105 @@
                     {!! nl2br(e($event->description)) !!}
                 </div>
             </div>
+
+            {{-- REVIEWS SECTION --}}
+            @if (\Carbon\Carbon::parse($event->date)->isPast())
+                <div class="lg:col-span-4 mt-12">
+                    <h2 class="text-2xl font-semibold text-[#3A4454] mb-6">User Reviews</h2>
+                    @auth
+
+                        <div class="mt-10 p-6 bg-white rounded-2xl shadow-md w-full mb-10">
+                            <h3 class="text-xl font-semibold mb-4 text-[#3A4454]">Add Your Review</h3>
+
+                            @if (session('success'))
+                                <div class="mb-4 text-green-600">{{ session('success') }}</div>
+                            @endif
+                            @if (session('error'))
+                                <div class="mb-4 text-red-600">{{ session('error') }}</div>
+                            @endif
+
+                            <form action="{{ route('reviews.store', $event) }}" method="POST" class="space-y-4">
+                                @csrf
+
+                                {{-- Rating --}}
+                                <div class="flex flex-row-reverse justify-end space-x-0 space-x-reverse">
+                                    @for ($i = 5; $i >= 1; $i--)
+                                        <input type="radio" id="star{{ $i }}" name="rating"
+                                            value="{{ $i }}" class="hidden peer" />
+                                        <label for="star{{ $i }}"
+                                            class="text-3xl text-gray-300 peer-checked:text-yellow-400 cursor-pointer transition hover:scale-110">
+                                            &#9733;
+                                        </label>
+                                    @endfor
+                                </div>
+                                {{-- Comment --}}
+                                <div>
+                                    <label for="comment" class="block mb-2 font-medium text-[#6B4E71]">Comment
+                                        (optional)
+                                    </label>
+                                    <textarea id="comment" name="comment" rows="4" maxlength="1000"
+                                        class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6B4E71]"
+                                        placeholder="Write your review here...">{{ old('comment') }}</textarea>
+                                </div>
+
+                                <button type="submit"
+                                    class="bg-[#6B4E71] hover:bg-[#593b5c] text-white py-2 px-6 rounded-md font-semibold transition">
+                                    Submit Review
+                                </button>
+                            </form>
+                        </div>
+                    @endauth
+                    @if ($reviews->count() > 0)
+                        <div class="space-y-6">
+                            @foreach ($reviews as $review)
+                                <div class="bg-white p-6 rounded-2xl shadow-inner">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center gap-4">
+                                            <div
+                                                class="w-10 h-10 bg-[#6B4E71] text-white rounded-full flex items-center justify-center font-bold">
+                                                {{ strtoupper(substr($review->user->name ?? 'U', 0, 1)) }}
+                                            </div>
+                                            <div>
+                                                <p class="font-semibold text-[#3A4454]">
+                                                    {{ $review->user->name ?? 'Unknown' }}</p>
+                                                <p class="text-xs text-[#6B4E71]/70">
+                                                    {{ $review->created_at->format('d.m.Y') }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-1 text-yellow-400">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                @if ($i <= $review->rating)
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current"
+                                                        viewBox="0 0 20 20" fill="currentColor">
+                                                        <path
+                                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.167c.969 0 1.371 1.24.588 1.81l-3.374 2.455a1 1 0 00-.364 1.118l1.287 3.955c.3.921-.755 1.688-1.538 1.118l-3.374-2.455a1 1 0 00-1.175 0l-3.374 2.455c-.783.57-1.838-.197-1.538-1.118l1.287-3.955a1 1 0 00-.364-1.118L2.068 9.382c-.783-.57-.38-1.81.588-1.81h4.167a1 1 0 00.95-.69l1.286-3.955z" />
+                                                    </svg>
+                                                @else
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-gray-300"
+                                                        viewBox="0 0 20 20" fill="currentColor">
+                                                        <path
+                                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.167c.969 0 1.371 1.24.588 1.81l-3.374 2.455a1 1 0 00-.364 1.118l1.287 3.955c.3.921-.755 1.688-1.538 1.118l-3.374-2.455a1 1 0 00-1.175 0l-3.374 2.455c-.783.57-1.838-.197-1.538-1.118l1.287-3.955a1 1 0 00-.364-1.118L2.068 9.382c-.783-.57-.38-1.81.588-1.81h4.167a1 1 0 00.95-.69l1.286-3.955z" />
+                                                    </svg>
+                                                @endif
+                                            @endfor
+                                        </div>
+                                    </div>
+                                    @if ($review->comment)
+                                        <p class="text-[#3A4454]">{{ $review->comment }}</p>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="mt-6">
+                            {{ $reviews->links() }}
+                        </div>
+                    @else
+                        <p class="text-[#6B4E71]/70">No reviews yet. Be the first to leave a review!</p>
+                    @endif
+            @endif
         </div>
+
+    </div>
     </div>
 @endsection
