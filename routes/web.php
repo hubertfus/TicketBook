@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\User\EventController as UserEventController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\OrderItemController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -11,6 +13,9 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'check.roles:admin'])->prefix('admin')->group(function () {
     Route::resource('events', AdminEventController::class);
+    Route::resource('orders', OrderController::class);
+    Route::resource('order-items', OrderItemController::class);
+
 });
 
 Route::middleware(['auth', 'check.roles:user'])->group(function () {});
