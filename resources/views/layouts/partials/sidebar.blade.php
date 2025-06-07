@@ -3,7 +3,7 @@
         ['name' => 'Dashboard', 'route' => 'events.index', 'icon' => 'heroicon-o-home'],
         ['name' => 'Transactions', 'route' => 'orders.index', 'icon' => 'heroicon-m-arrows-right-left'],
         ['name' => 'Reports', 'route' => 'events.index', 'icon' => 'heroicon-o-document-text'],
-        ['name' => 'Users', 'route' => 'events.index', 'icon' => 'heroicon-o-users'],
+        ['name' => 'Users', 'route' => 'users.index', 'icon' => 'heroicon-o-users'],
         ['name' => 'Events', 'route' => 'events.index', 'icon' => 'heroicon-o-calendar-days'],
         ['name' => 'Support', 'route' => 'events.index', 'icon' => 'heroicon-o-chat-bubble-left-right'],
         ['name' => 'Top-Up Generator', 'route' => 'admin.topup.create', 'icon' => 'heroicon-o-currency-dollar'],
