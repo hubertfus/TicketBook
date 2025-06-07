@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\User\EventController as UserEventController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -9,15 +10,13 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'check.roles:admin'])->prefix('admin')->group(function () {
-    Route::resource('events', EventController::class);
+    Route::resource('events', AdminEventController::class);
 });
 
-Route::middleware(['auth', 'check.roles:user'])->group(function () {
+Route::middleware(['auth', 'check.roles:user'])->group(function () {});
 
-});
 
-Route::get('/events', [EventController::class, 'index'])->name('events.index');
-Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+Route::resource('events', UserEventController::class)->only(['index', 'show']);
 
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
