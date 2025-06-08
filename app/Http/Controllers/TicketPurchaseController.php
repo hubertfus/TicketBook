@@ -10,12 +10,19 @@ class TicketPurchaseController extends Controller
 {
     public function create(Event $event)
     {
+        if ($event->date < now()->toDateString()) {
+            return redirect()->route('events.index')->with('error', 'This event has already ended.');
+        }
         $tickets = $event->tickets()->where('quantity', '>', 0)->get();
         return view('pages.user.events.buy', compact('event', 'tickets'));
     }
 
     public function store(Request $request, Event $event)
     {
+        if ($event->date < now()->toDateString()) {
+            return redirect()->route('events.index')->with('error', 'This event has already ended.');
+        }
+
         if (auth()->guest()) {
             return redirect()->route('login')->with('error', 'You must be logged in to complete your purchase.');
         }
