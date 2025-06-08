@@ -153,10 +153,11 @@
                                     @endfor
                                     <span class="ml-1 text-sm text-[#6B4E71]">{{ $review->rating }}/5</span>
                                 </div>
-
+                                @if($review->hasComment())
                                 <div class="bg-[#FFF7FD] p-3 rounded-lg">
                                     <p class="text-[#3A4454] whitespace-pre-line">{{ $review->comment }}</p>
                                 </div>
+                                @endif
                             </div>
                         </div>
                     @endforeach
