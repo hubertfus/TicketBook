@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\AdminTopUpController;
 use App\Http\Controllers\TopUpRedemptionController;
 use App\Http\Controllers\User\PaymentController;
 
+use App\Http\Controllers\AccountController;
 
 Route::get('/', function () {
     return view('pages.landingpage');
@@ -46,9 +47,13 @@ Route::middleware(['auth', 'check.roles:user'])->group(function () {
     Route::post('/orders/{order}/cancel', [UserOrderController::class, 'cancel'])->name('orders.cancel');
     Route::post('/orders/{order}/refund', [UserOrderController::class, 'refund'])->name('orders.refund');
     Route::post('/orders/{order}/refund-request', [UserOrderController::class, 'submitRefundRequest'])->name('orders.refund.request');
+    Route::get('/account', [AccountController::class, 'edit'])->name('profile.edit');
+    Route::put('/account', [AccountController::class, 'update'])->name('profile.update');
+    Route::delete('/account', [AccountController::class, 'destroy'])->name('profile.destroy');
 });
 
 Route::post('/events/{event}/add-review', [ReviewController::class, 'store'])->name('reviews.store');
+
 
 
 Route::get('/events/{event}/buy', [TicketPurchaseController::class, 'create'])->name('tickets.buy');
