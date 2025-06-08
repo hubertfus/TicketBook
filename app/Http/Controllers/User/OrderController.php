@@ -7,6 +7,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -54,8 +55,8 @@ class OrderController extends Controller
             return back()->with('error', 'You are not authorized to cancel this order.');
         }
 
-        if ($order->status !== 'paid') {
-            return back()->with('error', 'This order cannot be cancelled.');
+        if (!in_array($order->status, ['paid', 'pending'])) {
+            return back()->with('error', 'This order cannot be cancelled. Current status: ' . $order->status);
         }
 
         $order->load('orderItems.ticket.event');
@@ -85,26 +86,73 @@ class OrderController extends Controller
 
         $refundAmount = round($order->total_price * $refundRate, 2);
 
-        DB::transaction(function () use ($order, $user, $refundAmount, $event) {
-            $user->balance += $refundAmount;
-            $user->save();
+        try {
+            DB::transaction(function () use ($order, $user, $refundAmount, $event) {
 
-            $order->status = 'cancelled';
-            $order->save();
+                $user->balance += $refundAmount;
+                $user->save();
 
-            foreach ($order->orderItems as $orderItem) {
-                $ticket = $orderItem->ticket;
-                $quantity = $orderItem->quantity;
+                $order->status = 'cancelled';
+                $order->save();
 
-                $ticket->quantity += $quantity;
-                $ticket->save();
+                foreach ($order->orderItems as $orderItem) {
+                    $ticket = $orderItem->ticket;
+                    $quantity = $orderItem->quantity;
 
-                $event->ticketSold -= $quantity;
-            }
+                    $ticket->quantity += $quantity;
+                    $ticket->save();
 
-            $event->save();
-        });
+                    if (isset($event->ticketSold)) {
+                        $event->ticketSold -= $quantity;
+                    }
+                }
 
-        return redirect()->route('user.orders.index')->with('success', "Order cancelled. Refund: PLN {$refundAmount}.");
+                if (isset($event->ticketSold)) {
+                    $event->save();
+                }
+            });
+
+            return redirect()->route('user.orders.index')->with('success', "Order cancelled successfully. Refund: PLN " . number_format($refundAmount, 2, ',', ' '));
+
+        } catch (\Exception $e) {
+            Log::error('Order cancellation failed: ' . $e->getMessage());
+            return back()->with('error', 'Failed to cancel order. Please try again.');
+        }
+    }
+
+    public function refund(Request $request, Order $order)
+    {
+        $user = auth()->user();
+
+        if ($order->user_id !== $user->id) {
+            return back()->with('error', 'You are not authorized to refund this order.');
+        }
+
+        if ($order->status !== 'cancelled') {
+            return back()->with('error', 'Only cancelled orders can be refunded.');
+        }
+
+        $order->load('orderItems.ticket.event');
+        $event = $order->orderItems->first()->ticket->event ?? null;
+
+        if (!$event || $event->date >= now()) {
+            return back()->with('error', 'Refund is only available for past events.');
+        }
+
+        try {
+            DB::transaction(function () use ($order, $user) {
+                $user->balance += $order->total_price;
+                $user->save();
+
+                $order->status = 'refunded';
+                $order->save();
+            });
+
+            return redirect()->route('orders.index')->with('success', "Order refunded successfully. Amount: PLN " . number_format($order->total_price, 2, ',', ' '));
+
+        } catch (\Exception $e) {
+            Log::error('Order refund failed: ' . $e->getMessage());
+            return back()->with('error', 'Failed to process refund. Please try again.');
+        }
     }
 }
