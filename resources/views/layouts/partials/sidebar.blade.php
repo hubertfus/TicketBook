@@ -1,6 +1,6 @@
 @php
     $navItems = [
-        ['name' => 'Dashboard', 'route' => 'events.index', 'icon' => 'heroicon-o-home'],
+        ['name' => 'Dashboard', 'route' => 'admin.dashboard', 'icon' => 'heroicon-o-home'],
         ['name' => 'Transactions', 'route' => 'orders.index', 'icon' => 'heroicon-m-arrows-right-left'],
         ['name' => 'Refunds', 'route' => 'refunds.index', 'icon' => 'heroicon-o-receipt-refund'],
         ['name' => 'Reports', 'route' => 'events.index', 'icon' => 'heroicon-o-document-text'],
