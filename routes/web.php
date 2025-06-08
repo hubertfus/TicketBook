@@ -8,6 +8,7 @@ use App\Http\Controllers\TicketPurchaseController;
 use App\Http\Controllers\User\OrderController as UserOrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\OrderItemController as AdminOrderItemController;
+use App\Http\Controllers\Admin\RefundController as AdminRefundController;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminTopUpController;
@@ -25,6 +26,9 @@ Route::middleware(['auth', 'check.roles:admin'])->prefix('admin')->group(functio
     Route::get('/top-up-codes/create', [AdminTopUpController::class, 'create'])->name('admin.topup.create');
     Route::post('/top-up-codes/store', [AdminTopUpController::class, 'store'])->name('admin.topup.store');
     Route::resource('users', UserController::class);
+    Route::get('/refunds', [AdminRefundController::class, 'index'])->name('refunds.index');
+    Route::post('/refunds/{refund}/approve', [AdminRefundController::class, 'approve'])->name('refunds.approve');
+    Route::post('/refunds/{refund}/reject', [AdminRefundController::class, 'reject'])->name('refunds.reject');
 });
 
 Route::middleware(['auth', 'check.roles:user'])->group(function () {
@@ -39,6 +43,7 @@ Route::middleware(['auth', 'check.roles:user'])->group(function () {
     Route::get('/orders/{order}', [UserOrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{order}/cancel', [UserOrderController::class, 'cancel'])->name('orders.cancel');
     Route::post('/orders/{order}/refund', [UserOrderController::class, 'refund'])->name('orders.refund');
+    Route::post('/orders/{order}/refund-request', [UserOrderController::class, 'submitRefundRequest'])->name('orders.refund.request');
 });
 
 

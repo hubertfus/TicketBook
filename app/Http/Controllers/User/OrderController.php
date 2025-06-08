@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\Refund;
 
 class OrderController extends Controller
 {
@@ -15,7 +16,7 @@ class OrderController extends Controller
     {
         $user = Auth::user();
 
-        $query = Order::with('orderItems.ticket')
+        $query = Order::with(['orderItems.ticket', 'refund'])
             ->where('user_id', $user->id);
 
         if ($request->filled('status')) {
@@ -113,7 +114,6 @@ class OrderController extends Controller
             });
 
             return redirect()->route('user.orders.index')->with('success', "Order cancelled successfully. Refund: PLN " . number_format($refundAmount, 2, ',', ' '));
-
         } catch (\Exception $e) {
             Log::error('Order cancellation failed: ' . $e->getMessage());
             return back()->with('error', 'Failed to cancel order. Please try again.');
@@ -149,10 +149,40 @@ class OrderController extends Controller
             });
 
             return redirect()->route('orders.index')->with('success', "Order refunded successfully. Amount: PLN " . number_format($order->total_price, 2, ',', ' '));
-
         } catch (\Exception $e) {
             Log::error('Order refund failed: ' . $e->getMessage());
             return back()->with('error', 'Failed to process refund. Please try again.');
         }
+    }
+    public function submitRefundRequest(Request $request, Order $order)
+    {
+        $user = auth()->user();
+
+        if ($order->user_id !== $user->id) {
+            return back()->with('error', 'You are not authorized.');
+        }
+
+        $event = optional($order->orderItems->first()->ticket->event);
+
+        if (!$event || $event->date->isFuture()) {
+            return back()->with('error', 'You can request a refund only after the event has ended.');
+        }
+
+        if ($order->refund) {
+            return back()->with('error', 'Refund request already submitted.');
+        }
+
+        $request->validate([
+            'reason' => 'required|string|min:10',
+        ]);
+
+        Refund::create([
+            'order_id' => $order->id,
+            'user_id' => $user->id,
+            'reason' => $request->reason,
+            'status' => 'requested',
+        ]);
+
+        return back()->with('success', 'Your refund request has been sent.');
     }
 }
