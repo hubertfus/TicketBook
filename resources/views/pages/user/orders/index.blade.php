@@ -57,7 +57,7 @@
                             <td class="px-4 py-2">{{ $order->created_at->format('Y-m-d H:i') }}</td>
                             <td class="px-4 py-2">
                                 <div class="flex items-center space-x-2">
-                                    <a href="{{ route('orders.details', $order) }}"  class="text-blue-600 hover:underline text-sm">Details</a>
+                                    <a href="{{ route('orders.show', $order) }}"  class="text-blue-600 hover:underline text-sm">Details</a>
                                     @if (!in_array($order->status, ['cancelled', 'refunded']))
                                         <button class="text-red-600 hover:underline text-sm">
                                             Cancel
