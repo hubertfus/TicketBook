@@ -66,7 +66,12 @@
                     </form>
 
                     <a href="{{ route('events.edit', $event) }}"
-                        class="flex-1 block text-center bg-[#FFEBFA] border border-[#6B4E71] text-[#6B4E71] font-semibold py-2 rounded-xl hover:bg-[#6B4E71] hover:text-white transition">Edit</a>
+                        class="flex-1 flex justify-center items-center bg-[#FFEBFA] border border-[#6B4E71] text-[#6B4E71] font-semibold py-2 rounded-xl hover:bg-[#6B4E71] hover:text-white transition">Edit</a>
+
+                    <a href="{{ route('tickets.byEvent', $event->id) }}"
+                        class="flex-1 block text-center bg-[#D7C1D3] text-[#3A4454] font-semibold py-2 rounded-xl hover:bg-[#b399ad] transition">
+                        Manage tickets
+                    </a>
                 </div>
             @else
                 <div class="flex flex-1 space-x-4">
