@@ -4,7 +4,6 @@ use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\User\EventController as UserEventController;
 use App\Http\Controllers\User\OrderController as UserOrderController;
-use App\Http\Controllers\User\OrderItemController as UserOrderItemController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\OrderItemController as AdminOrderItemController;
 use Illuminate\Support\Facades\Route;
@@ -22,7 +21,7 @@ Route::middleware(['auth', 'check.roles:admin'])->prefix('admin')->group(functio
 
 Route::middleware(['auth', 'check.roles:user'])->group(function () {
         Route::get('/orders', [UserOrderController::class, 'index'])->name('user.orders.index');
-        Route::get('/orders/{order}', [UserOrderItemController::class, 'show'])->name('orders.details');
+        Route::get('/orders/{order}', [UserOrderController::class, 'show'])->name('orders.show');
 });
 
 

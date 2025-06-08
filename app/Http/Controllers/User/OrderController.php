@@ -5,12 +5,13 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $user = $request->user();
+        $user = Auth::user();
 
         $query = Order::with('orderItems.ticket')
             ->where('user_id', $user->id);
@@ -35,8 +36,13 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
+        // Sprawdzenie autoryzacji - czy zamówienie należy do zalogowanego użytkownika
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized access to this order.');
+        }
 
-        $order->load('orderItems.ticket');
+        // Załadowanie relacji z eventami
+        $order->load(['orderItems.ticket.event']);
 
         return view('pages.user.orders.show', compact('order'));
     }
