@@ -37,6 +37,7 @@ Route::middleware(['auth', 'check.roles:user'])->group(function () {
         ->name('topup.redeemDirect');
         Route::get('/orders', [UserOrderController::class, 'index'])->name('user.orders.index');
         Route::get('/orders/{order}', [UserOrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{order}/cancel', [UserOrderController::class, 'cancel'])->name('orders.cancel');
 });
 
 
