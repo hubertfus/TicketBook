@@ -51,7 +51,6 @@ class OrderItemController extends Controller
                 'total_price' => $ticketData['quantity'] * $ticketData['unit_price'],
             ]);
 
-            // Odejmij ilość biletów
             $ticket->decrement('quantity', $ticketData['quantity']);
         }
 
