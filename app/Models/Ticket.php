@@ -52,4 +52,11 @@ class Ticket extends Model
     {
         return $this->quantity > 0;
     }
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_items')
+            ->withPivot('quantity', 'unit_price')
+            ->withTimestamps();
+    }
 }

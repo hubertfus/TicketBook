@@ -79,4 +79,11 @@ class Order extends Model
         });
         $this->save();
     }
+
+    public function tickets()
+    {
+        return $this->belongsToMany(Ticket::class, 'order_items')
+            ->withPivot('quantity', 'unit_price')
+            ->withTimestamps();
+    }
 }
