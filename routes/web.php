@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\User\EventController as UserEventController;
+use App\Http\Controllers\TicketPurchaseController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\OrderItemController;
 use Illuminate\Support\Facades\Route;
@@ -18,9 +19,10 @@ Route::middleware(['auth', 'check.roles:admin'])->prefix('admin')->group(functio
 
 });
 
-Route::middleware(['auth', 'check.roles:user'])->group(function () {});
+Route::middleware(['auth', 'check.roles:user'])->group(function () { });
 
-
+Route::get('/events/{event}/buy', [TicketPurchaseController::class, 'create'])->name('tickets.buy');
+Route::post('/events/{event}/buy', [TicketPurchaseController::class, 'store'])->name('tickets.store');
 Route::resource('events', UserEventController::class)->only(['index', 'show']);
 
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');

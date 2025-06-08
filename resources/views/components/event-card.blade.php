@@ -70,7 +70,7 @@
                 </div>
             @else
                 <div class="flex flex-1 space-x-4">
-                    <a href="#"
+                    <a href="{{ route('tickets.buy', $event) }}"
                         class="flex-1 text-center bg-[#6B4E71] text-white font-bold py-2 rounded-xl shadow-md hover:bg-[#593b5c] transition">Buy
                         Ticket</a>
                     <a href="{{ route('events.show', $event) }}"
