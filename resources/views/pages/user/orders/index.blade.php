@@ -57,13 +57,20 @@
                             <td class="px-4 py-2">{{ $order->created_at->format('Y-m-d H:i') }}</td>
                             <td class="px-4 py-2">
                                 <div class="flex items-center space-x-2">
-                                    <a href="{{ route('orders.show', $order) }}"  class="text-blue-600 hover:underline text-sm">Details</a>
+                                    <a href="{{ route('orders.show', $order) }}"
+                                        class="text-blue-600 hover:underline text-sm">Details</a>
                                     @if (!in_array($order->status, ['cancelled', 'refunded']))
-                                        <button class="text-red-600 hover:underline text-sm">
-                                            Cancel
-                                        </button>
+                                        <form action="{{ route('orders.cancel', $order) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                                            @csrf
+                                            <button type="submit" class="text-red-600 hover:underline text-sm">
+                                                Cancel
+                                            </button>
+                                        </form>
                                     @else
-                                        <span class="text-gray-400 text-sm italic">Unavailable</span>
+                                        <button type="submit" class="text-red-600 hover:underline text-sm">
+                                                Refund
+                                            </button>
                                     @endif
                                 </div>
                             </td>

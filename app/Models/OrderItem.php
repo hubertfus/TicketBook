@@ -56,4 +56,8 @@ class OrderItem extends Model
             $q->where('type', $type);
         });
     }
+    public function ticket()
+    {
+        return $this->belongsTo(Ticket::class);
+    }
 }
