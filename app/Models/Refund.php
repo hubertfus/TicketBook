@@ -19,6 +19,10 @@ class Refund extends Model
     /**
      * Relationship to the order
      */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);

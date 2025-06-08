@@ -75,7 +75,7 @@ class EventController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|min:5|max:255',
-            'date' => 'required|date|after_or_equal:today',
+            'date' => 'required|date',
             'time' => 'required|date_format:H:i',
             'type' => 'required|string|in:concert,sport,standup,festival,other',
             'description' => 'required|string|min:10|max:2000',
