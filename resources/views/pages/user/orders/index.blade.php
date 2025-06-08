@@ -67,10 +67,16 @@
                                                 Cancel
                                             </button>
                                         </form>
-                                    @else
-                                        <button type="submit" class="text-red-600 hover:underline text-sm">
+                                    @elseif ($order->status !== 'refunded' && optional($order->orderItems->first()->ticket->event)->date < now())
+                                        <form action="{{ route('orders.refund', $order) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure you want to refund this order?');">
+                                            @csrf
+                                            <button type="submit" class="text-blue-600 hover:underline text-sm">
                                                 Refund
                                             </button>
+                                        </form>
+                                    @else
+                                        <span class="text-gray-500 text-sm">Unavailable</span>
                                     @endif
                                 </div>
                             </td>

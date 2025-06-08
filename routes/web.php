@@ -33,9 +33,10 @@ Route::middleware(['auth', 'check.roles:user'])->group(function () {
     Route::post('/payment/{event}', [PaymentController::class, 'pay'])->name('payment.pay');
     Route::post('/top-up/redeem-direct/{code}', [TopUpRedemptionController::class, 'redeemDirect'])
         ->name('topup.redeemDirect');
-        Route::get('/orders', [UserOrderController::class, 'index'])->name('user.orders.index');
-        Route::get('/orders/{order}', [UserOrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders', [UserOrderController::class, 'index'])->name('user.orders.index');
+    Route::get('/orders/{order}', [UserOrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{order}/cancel', [UserOrderController::class, 'cancel'])->name('orders.cancel');
+    Route::post('/orders/{order}/refund', [UserOrderController::class, 'refund'])->name('orders.refund');
 });
 
 
