@@ -60,6 +60,11 @@ class PaymentController extends Controller
                 $ticket->quantity -= $item['quantity'];
                 $ticket->save();
             }
+
+            $totalTicketsBought = collect($purchaseData['tickets'])->sum('quantity');
+
+            $event->ticketSold += $totalTicketsBought;
+            $event->save();
         });
 
         session()->forget('purchase_data');
