@@ -35,12 +35,12 @@
                     <div id="userDropdown"
                         class="hidden absolute right-0 mt-2 w-72 bg-[#FFEBFA] border border-gray-200 rounded-xl shadow-2xl z-50 text-lg">
                         <a href="{{ route('user.orders.index') }}" class="block px-6 py-3 text-black hover:bg-[#D7C1D3]">Transakcje / bilety</a>
-                        <a href="#" class="block px-6 py-3 text-black hover:bg-[#D7C1D3]">Dane kontaktowe</a>
+                        <a href="{{route('profile.edit')}}" class="block px-6 py-3 text-black hover:bg-[#D7C1D3]">Account</a>
                         <a href="{{ route('topup.index') }}" class="block px-6 py-3 text-black hover:bg-[#D7C1D3]">My
                             Top-Up Codes</a>
                         <a href="{{ route('logout') }}" class="block px-6 py-3 text-black hover:bg-[#D7C1D3]">Wyloguj
                             się</a>
-                        <a href="#" class="block px-6 py-3 text-red-600 hover:bg-[#D7C1D3]">Usuń konto</a>
+                        <a href="{{route('profile.destroy')}}" class="block px-6 py-3 text-red-600 hover:bg-[#D7C1D3]">Delete an account</a>
                     </div>
                 </div>
             @endif
