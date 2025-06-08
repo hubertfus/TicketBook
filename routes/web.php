@@ -3,10 +3,15 @@
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\User\EventController as UserEventController;
+use App\Http\Controllers\TicketPurchaseController;
 use App\Http\Controllers\User\OrderController as UserOrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\OrderItemController as AdminOrderItemController;
+
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\AdminTopUpController;
+use App\Http\Controllers\TopUpRedemptionController;
+use App\Http\Controllers\User\PaymentController;
 
 Route::get('/', function () {
     return view('pages.landingpage');
@@ -16,15 +21,25 @@ Route::middleware(['auth', 'check.roles:admin'])->prefix('admin')->group(functio
     Route::resource('events', AdminEventController::class);
     Route::resource('orders', AdminOrderController::class);
     Route::resource('order-items', AdminOrderItemController::class);
-
+    Route::get('/top-up-codes/create', [AdminTopUpController::class, 'create'])->name('admin.topup.create');
+    Route::post('/top-up-codes/store', [AdminTopUpController::class, 'store'])->name('admin.topup.store');
 });
 
 Route::middleware(['auth', 'check.roles:user'])->group(function () {
+    Route::get('/top-up', [TopUpRedemptionController::class, 'showForm'])->name('topup.form');
+    Route::post('/top-up', [TopUpRedemptionController::class, 'redeem'])->name('topup.redeem');
+    Route::get('/my-topup-codes', [TopUpRedemptionController::class, 'index'])->name('topup.index');
+    Route::get('/payment/{event}', [PaymentController::class, 'show'])->name('payment.show');
+    Route::post('/payment/{event}', [PaymentController::class, 'pay'])->name('payment.pay');
+    Route::post('/top-up/redeem-direct/{code}', [TopUpRedemptionController::class, 'redeemDirect'])
+        ->name('topup.redeemDirect');
         Route::get('/orders', [UserOrderController::class, 'index'])->name('user.orders.index');
         Route::get('/orders/{order}', [UserOrderController::class, 'show'])->name('orders.show');
 });
 
 
+Route::get('/events/{event}/buy', [TicketPurchaseController::class, 'create'])->name('tickets.buy');
+Route::post('/events/{event}/buy', [TicketPurchaseController::class, 'store'])->name('tickets.store');
 Route::resource('events', UserEventController::class)->only(['index', 'show']);
 
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');

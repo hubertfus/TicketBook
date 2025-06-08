@@ -32,9 +32,11 @@ class OrderItem extends Model
     /**
      * Relationship to the ticket
      */
-    public function ticket(): BelongsTo
+    public function tickets()
     {
-        return $this->belongsTo(Ticket::class);
+        return $this->belongsToMany(Ticket::class, 'order_items')
+            ->withPivot('quantity', 'unit_price')
+            ->withTimestamps();
     }
 
     /**
@@ -50,7 +52,7 @@ class OrderItem extends Model
      */
     public function scopeTicketType($query, string $type)
     {
-        return $query->whereHas('ticket', function($q) use ($type) {
+        return $query->whereHas('ticket', function ($q) use ($type) {
             $q->where('type', $type);
         });
     }

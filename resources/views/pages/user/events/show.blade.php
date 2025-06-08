@@ -67,6 +67,8 @@
                         @php
                             $remaining = $event->totalTickets - $event->ticketSold;
                             $percent = round(($event->ticketSold / $event->totalTickets) * 100);
+                            $eventEnded = \Carbon\Carbon::parse($event->date)->isPast();
+                            $canBuy = $remaining > 0 && !$eventEnded;
                         @endphp
                         <div class="space-y-4 text-[#3A4454] text-sm">
                             <div class="flex justify-between">
@@ -84,13 +86,14 @@
                                     <div class="h-2.5 rounded-full bg-[#6B4E71]" style="width:{{ $percent }}%"></div>
                                 </div>
                             </div>
-                            <button
+
+                            <a href="{{ $canBuy ? route('tickets.buy', $event) : '#' }}"
                                 class="w-full py-3 px-4 rounded-lg font-medium flex items-center justify-center gap-2 transition-all
-                                {{ $remaining > 0 ? 'bg-[#6B4E71] hover:bg-[#593b5c] text-white' : 'bg-gray-400 text-white cursor-not-allowed' }}"
-                                {{ $remaining <= 0 ? 'disabled' : '' }}>
+                                {{ $canBuy ? 'bg-[#6B4E71] hover:bg-[#593b5c] text-white' : 'bg-gray-400 text-white cursor-not-allowed' }}"
+                                {{ !$canBuy ? 'aria-disabled=true tabindex=-1' : '' }}>
                                 @svg('heroicon-o-ticket', 'h-5 w-5')
-                                {{ $remaining > 0 ? 'Get Tickets' : 'Sold Out' }}
-                            </button>
+                                {{ $canBuy ? 'Get Tickets' : ($eventEnded ? 'Event ended' : 'Sold Out') }}
+                            </a>
                             @if ($event->last_minute)
                                 <div class="mt-4 p-3 bg-[#FFD6EC] border border-[#FFB4D4] rounded-lg text-[#6B4E71]">
                                     <p class="font-semibold mb-1">Last minute!</p>
