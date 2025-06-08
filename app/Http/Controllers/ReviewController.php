@@ -2,13 +2,76 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Event;
-use App\Models\Review;
+
 use Illuminate\Http\Request;
+use App\Models\Review;
+use App\Models\Event;
 
 class ReviewController extends Controller
 {
-public function store(Request $request, Event $event)
+    public function index(Request $request)
+    {
+        $query = Review::with(['user', 'event'])
+            ->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('comment', 'like', "%$search%")
+                    ->orWhereHas('event', function ($q) use ($search) {
+                        $q->where('title', 'like', "%$search%");
+                    })
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    });
+            });
+        }
+
+        if ($request->filled('rating')) {
+            $query->where('rating', $request->input('rating'));
+        }
+
+        if ($request->filled('event')) {
+            $query->where('event_id', $request->input('event'));
+        }
+
+        return view('pages.admin.reviews.index', [
+            'reviews' => $query->paginate(10),
+            'ratings' => range(1, 5),
+            'events' => Event::orderBy('title')->get(),
+            'totalReviews' => Review::count(),
+            'averageRating' => Review::avg('rating') ?? 0,
+            'lastReviewDate' => Review::latest()->first()?->created_at
+        ]);
+
+
+    }
+
+    public function destroy(Review $review)
+    {
+        $review->delete();
+
+        return back()->with('success', 'Recenzja usunięta!');
+    }
+
+    public function edit(Review $review)
+    {
+        return view('pages.admin.reviews.edit', compact('review'));
+    }
+
+    public function update(Request $request, Review $review)
+    {
+        $validated = $request->validate([
+            'rating' => 'required|integer|between:1,5',
+            'comment' => 'required|string|max:1000'
+        ]);
+
+        $review->update($validated);
+
+        return redirect()->route('admin.reviews.index')
+            ->with('success', 'Recenzja została zaktualizowana!');
+    }
+    public function store(Request $request, Event $event)
 {
     $user = auth()->user();
 
@@ -46,6 +109,4 @@ public function store(Request $request, Event $event)
 
     return redirect()->back()->with('success', 'Thank you for your review!');
 }
-
-
 }
