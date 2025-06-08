@@ -47,7 +47,7 @@
     </div>
 
     {{-- Orders Table --}}
-    <div class="overflow-x-auto p-4">
+    <div class="max-w-7xl mx-auto overflow-x-auto p-4">
         <table class="min-w-full bg-[#FFF7FD] shadow rounded-lg overflow-hidden">
             <thead class="bg-[#FFEBFA] text-gray-700 text-sm font-semibold">
                 <tr>

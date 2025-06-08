@@ -40,7 +40,7 @@
                     </label>
                     <select name="status" required
                         class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]">
-                        @foreach (['pending', 'paid', 'shipped', 'cancelled'] as $status)
+                        @foreach (['pending', 'paid', 'cancelled', 'refunded'] as $status)
                             <option value="{{ $status }}">{{ ucfirst($status) }}</option>
                         @endforeach
                     </select>
@@ -48,28 +48,35 @@
 
                 {{-- Ticket Items --}}
                 <div id="ticket-items" class="space-y-4">
-                    <div class="ticket-item grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                        <div>
-                            <label class="block text-sm font-medium text-[#3A4454] mb-2">Ticket</label>
-                            <select name="tickets[0][ticket_id]" class="ticket-select w-full px-4 py-3 bg-white rounded-xl shadow-inner"
-                                required>
-                                @foreach ($tickets as $ticket)
-                                    <option value="{{ $ticket->id }}" data-price="{{ $ticket->price }}">
-                                        {{ $ticket->category }} – {{ $ticket->event->title }} ({{ number_format($ticket->price, 2) }} PLN)
-                                    </option>
-                                @endforeach
-                            </select>
+                    <div class="ticket-item relative bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                            <div>
+                                <label class="block text-sm font-medium text-[#3A4454] mb-2">Ticket</label>
+                                <select name="tickets[0][ticket_id]" class="ticket-select w-full px-4 py-3 bg-white rounded-xl shadow-inner"
+                                    required>
+                                    @foreach ($tickets as $ticket)
+                                        <option value="{{ $ticket->id }}" data-price="{{ $ticket->price }}">
+                                            {{ $ticket->category }} – {{ $ticket->event->title }} ({{ number_format($ticket->price, 2) }} PLN)
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-[#3A4454] mb-2">Quantity</label>
+                                <input type="number" name="tickets[0][quantity]" min="1" max="10" value="1"
+                                    class="ticket-quantity w-full px-4 py-3 bg-white rounded-xl shadow-inner" required />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-[#3A4454] mb-2">Unit Price (PLN)</label>
+                                <input type="number" name="tickets[0][unit_price]" step="0.01"
+                                    class="ticket-price w-full px-4 py-3 bg-white rounded-xl shadow-inner" required />
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-[#3A4454] mb-2">Quantity</label>
-                            <input type="number" name="tickets[0][quantity]" min="1" value="1"
-                                class="ticket-quantity w-full px-4 py-3 bg-white rounded-xl shadow-inner" required />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-[#3A4454] mb-2">Unit Price (PLN)</label>
-                            <input type="number" name="tickets[0][unit_price]" step="0.01"
-                                class="ticket-price w-full px-4 py-3 bg-white rounded-xl shadow-inner" required />
-                        </div>
+
+                        {{-- Remove button (hidden for first item initially) --}}
+                        <button type="button" class="remove-ticket absolute top-2 right-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full p-2 transition-colors duration-200 hidden" title="Remove this ticket">
+                            @svg('heroicon-o-trash', 'w-5 h-5')
+                        </button>
                     </div>
                 </div>
 
@@ -148,6 +155,50 @@
             return valid;
         }
 
+        function updateTicketIndexes() {
+            document.querySelectorAll('.ticket-item').forEach((item, index) => {
+                const select = item.querySelector('.ticket-select');
+                const quantityInput = item.querySelector('.ticket-quantity');
+                const priceInput = item.querySelector('.ticket-price');
+
+                select.setAttribute('name', `tickets[${index}][ticket_id]`);
+                quantityInput.setAttribute('name', `tickets[${index}][quantity]`);
+                priceInput.setAttribute('name', `tickets[${index}][unit_price]`);
+            });
+        }
+
+        function updateRemoveButtonsVisibility() {
+            const ticketItems = document.querySelectorAll('.ticket-item');
+            const showRemoveButtons = ticketItems.length > 1;
+
+            ticketItems.forEach(item => {
+                const removeButton = item.querySelector('.remove-ticket');
+                if (showRemoveButtons) {
+                    removeButton.classList.remove('hidden');
+                } else {
+                    removeButton.classList.add('hidden');
+                }
+            });
+        }
+
+        function removeTicket(button) {
+            const ticketItems = document.querySelectorAll('.ticket-item');
+
+            if (ticketItems.length <= 1) {
+                alert('You must have at least one ticket in the order.');
+                return;
+            }
+
+            if (confirm('Are you sure you want to remove this ticket?')) {
+                const ticketItem = button.closest('.ticket-item');
+                ticketItem.remove();
+                updateTicketIndexes();
+                updateRemoveButtonsVisibility();
+                updateTotal();
+            }
+        }
+
+        // Initialize first ticket
         document.querySelectorAll('.ticket-select').forEach(select => {
             select.addEventListener('change', () => {
                 setPriceFromSelect(select);
@@ -156,36 +207,77 @@
             setPriceFromSelect(select);
         });
 
+        // Initialize remove button for first ticket
+        document.querySelectorAll('.remove-ticket').forEach(button => {
+            button.addEventListener('click', () => removeTicket(button));
+        });
+
         document.getElementById('ticket-items').addEventListener('input', () => {
             updateTotal();
             validateAll();
         });
 
         document.getElementById('add-ticket').addEventListener('click', () => {
-            const newIndex = ticketIndex++;
-            const original = document.querySelector('.ticket-item');
-            const clone = original.cloneNode(true);
+            if (!validateAll()) return;
 
-            clone.querySelectorAll('select, input').forEach(input => {
-                const name = input.getAttribute('name');
-                const newName = name.replace(/\d+/, newIndex);
-                input.setAttribute('name', newName);
+            if (ticketIndex >= 10) {
+                alert('You can add up to 10 ticket types only.');
+                return;
+            }
 
-                if (input.matches('input')) {
-                    input.value = input.classList.contains('ticket-quantity') ? '1' : '';
-                }
-            });
+            if (hasDuplicateTicketIds()) {
+                alert("You can't select the same ticket more than once.");
+                return;
+            }
 
-            original.parentNode.appendChild(clone);
+            const container = document.getElementById('ticket-items');
+            const div = document.createElement('div');
+            div.className = 'ticket-item relative bg-white p-4 rounded-xl shadow-sm border border-gray-200';
 
-            const newSelect = clone.querySelector('.ticket-select');
-            newSelect.addEventListener('change', function () {
-                setPriceFromSelect(this);
+            div.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    <div>
+                        <label class="block text-sm font-medium text-[#3A4454] mb-2">Ticket</label>
+                        <select name="tickets[${ticketIndex}][ticket_id]" class="ticket-select w-full px-4 py-3 bg-white rounded-xl shadow-inner" required>
+                            @foreach ($tickets as $ticket)
+                                <option value="{{ $ticket->id }}" data-price="{{ $ticket->price }}">
+                                    {{ $ticket->category }} – {{ $ticket->event->title }} ({{ number_format($ticket->price, 2) }} PLN)
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-[#3A4454] mb-2">Quantity</label>
+                        <input type="number" name="tickets[${ticketIndex}][quantity]" min="1" max="10" value="1" class="ticket-quantity w-full px-4 py-3 bg-white rounded-xl shadow-inner" required />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-[#3A4454] mb-2">Unit Price (PLN)</label>
+                        <input type="number" name="tickets[${ticketIndex}][unit_price]" step="0.01" class="ticket-price w-full px-4 py-3 bg-white rounded-xl shadow-inner" required />
+                    </div>
+                </div>
+
+                <button type="button" class="remove-ticket absolute top-2 right-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full p-2 transition-colors duration-200" title="Remove this ticket">
+                    @svg('heroicon-o-trash', 'w-5 h-5')
+                </button>
+            `;
+
+            container.appendChild(div);
+
+            const newSelect = div.querySelector('.ticket-select');
+            const newRemoveButton = div.querySelector('.remove-ticket');
+
+            newSelect.addEventListener('change', () => {
+                setPriceFromSelect(newSelect);
                 validateAll();
             });
 
-            clone.querySelector('.ticket-quantity').addEventListener('input', validateAll);
+            newRemoveButton.addEventListener('click', () => removeTicket(newRemoveButton));
 
+            div.querySelector('.ticket-quantity').addEventListener('input', validateAll);
+
+            setPriceFromSelect(newSelect);
+            ticketIndex++;
+            updateRemoveButtonsVisibility();
             updateTotal();
         });
 
@@ -197,6 +289,7 @@
         });
 
         updateTotal();
+        updateRemoveButtonsVisibility();
     });
 </script>
 
