@@ -6,6 +6,7 @@
         ['name' => 'Reports', 'route' => 'events.index', 'icon' => 'heroicon-o-document-text'],
         ['name' => 'Users', 'route' => 'users.index', 'icon' => 'heroicon-o-users'],
         ['name' => 'Events', 'route' => 'events.index', 'icon' => 'heroicon-o-calendar-days'],
+        ['name' => "Reviews", 'route' => 'admin.reviews.index', 'icon' => 'heroicon-o-chat-bubble-bottom-center-text'],
         ['name' => 'Support', 'route' => 'events.index', 'icon' => 'heroicon-o-chat-bubble-left-right'],
         ['name' => 'Top-Up Generator', 'route' => 'admin.topup.create', 'icon' => 'heroicon-o-currency-dollar'],
     ];
