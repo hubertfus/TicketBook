@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminTopUpController;
 use App\Http\Controllers\TopUpRedemptionController;
 use App\Http\Controllers\User\PaymentController;
-
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('pages.landingpage');
@@ -32,6 +32,7 @@ Route::middleware(['auth', 'check.roles:admin'])->prefix('admin')->group(functio
     Route::post('/refunds/{refund}/approve', [AdminRefundController::class, 'approve'])->name('refunds.approve');
     Route::post('/refunds/{refund}/reject', [AdminRefundController::class, 'reject'])->name('refunds.reject');
     Route::resource('reviews', ReviewController::class)->names(['index' => 'admin.reviews.index','show' => 'admin.reviews.show','edit' => 'admin.reviews.edit','update' => 'admin.reviews.update','destroy' => 'admin.reviews.destroy']);
+    Route::get('', [DashboardController::class, 'index'])->name('admin.dashboard');
 });
 
 Route::middleware(['auth', 'check.roles:user'])->group(function () {
