@@ -2,6 +2,7 @@
     $navItems = [
         ['name' => 'Dashboard', 'route' => 'events.index', 'icon' => 'heroicon-o-home'],
         ['name' => 'Transactions', 'route' => 'orders.index', 'icon' => 'heroicon-m-arrows-right-left'],
+        ['name' => 'Refunds', 'route' => 'refunds.index', 'icon' => 'heroicon-o-receipt-refund'],
         ['name' => 'Reports', 'route' => 'events.index', 'icon' => 'heroicon-o-document-text'],
         ['name' => 'Users', 'route' => 'users.index', 'icon' => 'heroicon-o-users'],
         ['name' => 'Events', 'route' => 'events.index', 'icon' => 'heroicon-o-calendar-days'],
