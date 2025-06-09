@@ -51,6 +51,9 @@ Route::middleware(['auth', 'check.roles:user'])->group(function () {
     Route::get('/account', [AccountController::class, 'edit'])->name('profile.edit');
     Route::put('/account', [AccountController::class, 'update'])->name('profile.update');
     Route::delete('/account', [AccountController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/orders/{order}/confirmation', [UserOrderController::class, 'downloadConfirmation'])
+        ->middleware('auth')
+        ->name('orders.confirmation');
 });
 
 Route::post('/events/{event}/add-review', [ReviewController::class, 'store'])->name('reviews.store');

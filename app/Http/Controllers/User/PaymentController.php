@@ -46,7 +46,7 @@ class PaymentController extends Controller
 
             $order = $user->orders()->create([
                 'event_id' => $event->id,
-                'total' => $purchaseData['total'],
+                'total_price' => $purchaseData['total'],
                 'status' => 'paid',
             ]);
 
@@ -69,6 +69,6 @@ class PaymentController extends Controller
 
         session()->forget('purchase_data');
 
-        return redirect()->route('events.show', $event)->with('success', 'Payment successful. Tickets purchased!');
+        return redirect()->route('user.orders.index', $event)->with('success', 'Payment successful. Tickets purchased!');
     }
 }
