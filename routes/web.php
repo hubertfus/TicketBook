@@ -37,6 +37,11 @@ Route::middleware(['auth', 'check.roles:admin'])->prefix('admin')->group(functio
     Route::get('', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('events/{event}/tickets', [TicketController::class, 'byEvent'])->name('tickets.byEvent');
     Route::resource('tickets', TicketController::class)->except(['create', 'store', 'show']);
+    Route::get('events/{event}/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
+    Route::post('events/{event}/tickets', [TicketController::class, 'store'])->name('admin.tickets.store');
+    Route::put('tickets/{ticket}', [TicketController::class, 'update'])->name('tickets.update');
+    Route::delete('tickets/{ticket}', [TicketController::class, 'destroy'])->name('tickets.destroy');
+    Route::get('tickets/{ticket}/edit', [TicketController::class, 'edit'])->name('tickets.edit');
 });
 
 Route::middleware(['auth', 'check.roles:user'])->group(function () {

@@ -9,6 +9,33 @@ use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
+    public function create(Event $event)
+    {
+        return view('pages.admin.tickets.create', compact('event'));
+    }
+
+    public function store(Request $request, Event $event)
+    {
+        $validated = $request->validate([
+            'category' => 'required|string|max:255',
+            'price' => 'required|numeric|min:5',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $event->tickets()->create($validated);
+
+        $totalInCategories = $event->tickets()->sum('quantity');
+
+        if ($totalInCategories > $event->totalTickets) {
+            $event->totalTickets = $totalInCategories;
+            $event->save();
+        }
+
+        return redirect()
+            ->route('tickets.byEvent', $event->id)
+            ->with('success', 'New ticket category added successfully.');
+    }
+
     public function byEvent(Request $request, Event $event)
     {
         $query = $event->tickets();
@@ -41,15 +68,51 @@ class TicketController extends Controller
             'price' => 'required|numeric|min:5',
             'quantity' => 'required|integer|min:0',
         ]);
+        $event = $ticket->event;
+
+        $sold = $event->ticketSold;
+        $oldQty = $ticket->quantity;
+        $newQty = $validated['quantity'];
+        $delta = $newQty - $oldQty;
+
+        $newTotal = $event->totalTickets + $delta;
+
+        if ($newTotal < $sold) {
+            return back()->withErrors([
+                'quantity' => "Cannot set quantity to {$newQty}; total tickets ({$newTotal}) would be less than sold ({$sold})."
+            ])->withInput();
+        }
 
         $ticket->update($validated);
 
-        return redirect()->route('tickets.index')->with('success', 'Ticket updated successfully!');
+        $event->totalTickets = $newTotal;
+        $event->save();
+
+        return redirect()
+            ->route('tickets.byEvent', $event->id)
+            ->with('success', 'Ticket updated and totalTickets adjusted.');
     }
 
     public function destroy(Ticket $ticket)
     {
+        $event = $ticket->event;
+        $sold = $event->ticketSold;
+
+        $qty = $ticket->quantity;
+        $newTotal = $event->totalTickets - $qty;
+
+        if ($newTotal < $sold) {
+            return back()->withErrors([
+                'ticket' => "Cannot delete category; total tickets ({$newTotal}) would be less than sold ({$sold})."
+            ]);
+        }
+
         $ticket->delete();
-        return redirect()->route('tickets.index')->with('success', 'Ticket deleted successfully!');
+        $event->totalTickets = $newTotal;
+        $event->save();
+
+        return redirect()
+            ->route('tickets.byEvent', $event->id)
+            ->with('success', 'Ticket category deleted and totalTickets updated!');
     }
 }
