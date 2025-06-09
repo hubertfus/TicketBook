@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
@@ -22,24 +20,30 @@ class PasswordResetController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        $status = Password::sendResetLink($request->only('email'));
+        $user = User::where('email', $request->email)->first();
 
-        if ($status === Password::RESET_LINK_SENT) {
-            $user = User::where('email', $request->email)->first();
-            $resetRecord = \DB::table('password_resets')->where('email', $user->email)->first();
-
-            if (!$resetRecord) {
-                Log::warning("Password reset requested, but token not found for {$user->email}");
-                return back()->withErrors(['email' => 'Could not generate reset link. Please try again.']);
-            }
-
-            $token = $resetRecord->token;
-            $link = url(route('password.reset', ['token' => $token, 'email' => $user->email], false));
-            Log::info('Password reset link: ' . $link);
-            return back()->with('status', __($status));
+        if (!$user) {
+            return back()->withErrors(['email' => 'User not found.']);
         }
 
-        return back()->withErrors(['email' => __($status)]);
+        $token = Str::random(60);
+
+        \DB::table('password_resets')->where('email', $user->email)->delete();
+
+        \DB::table('password_resets')->insert([
+            'email' => $user->email,
+            'token' => Hash::make($token),
+            'created_at' => now(),
+        ]);
+
+        $link = url(route('password.reset', [
+            'token' => $token,
+            'email' => $user->email
+        ], false));
+
+        Log::info('Password reset link: ' . $link);
+
+        return back()->with('status', 'Password reset link has been generated and logged.');
     }
 
 
@@ -56,23 +60,26 @@ class PasswordResetController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email|exists:users,email',
-            'password' => 'required|min:8|confirmed',
+            'password' => 'required|min:6|confirmed',
         ]);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (User $user, string $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password),
-                    'remember_token' => Str::random(60),
-                ])->save();
+        $record = \DB::table('password_resets')->where('email', $request->email)->first();
 
-                event(new PasswordReset($user));
-            }
-        );
+        if (!$record || !Hash::check($request->token, $record->token)) {
+            return back()->withErrors(['email' => ['This password reset token is invalid.']]);
+        }
 
-        return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', __($status))
-            : back()->withErrors(['email' => [__($status)]]);
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => ['User not found.']]);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->remember_token = Str::random(60);
+        $user->save();
+
+        \DB::table('password_resets')->where('email', $request->email)->delete();
+
+        return redirect()->route('login')->with('status', 'Password has been reset!');
     }
 }
