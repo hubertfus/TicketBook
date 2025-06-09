@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Refund;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -184,5 +185,14 @@ class OrderController extends Controller
         ]);
 
         return back()->with('success', 'Your refund request has been sent.');
+    }
+    public function downloadConfirmation(Order $order)
+    {
+        if (auth()->id() !== $order->user_id) {
+            abort(403);
+        }
+
+        $pdf = Pdf::loadView('pdf.order-confirmation', ['order' => $order]);
+        return $pdf->download('order-confirmation-' . $order->id . '.pdf');
     }
 }
