@@ -11,10 +11,23 @@ use Illuminate\Support\Str;
 class AdminTopUpController extends Controller
 {
 
-    public function create()
+    public function create(Request $request)
     {
         $users = User::where('role', 'user')->get();
-        return view('pages.admin.topup.create', compact('users'));
+
+        $codes = TopUpCode::query()
+            ->with('user')
+            ->when($request->code, fn($q) =>
+                $q->where('code', 'like', '%' . $request->code . '%'))
+            ->when($request->email, fn($q) =>
+                $q->whereHas('user', fn($q) =>
+                    $q->where('email', 'like', '%' . $request->email . '%')))
+            ->when($request->is_used !== null, fn($q) =>
+                $q->where('is_used', $request->is_used))
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        return view('pages.admin.topup.create', compact('users', 'codes'));
     }
 
     public function store(Request $request)
