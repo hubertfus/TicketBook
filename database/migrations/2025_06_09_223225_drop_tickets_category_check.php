@@ -11,9 +11,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        DB::statement('ALTER TABLE tickets DROP CONSTRAINT IF EXISTS tickets_category_check');
         Schema::table('tickets', function (Blueprint $table) {
-            $table->string('category')->change();
+            DB::statement('ALTER TABLE tickets DROP CONSTRAINT IF EXISTS tickets_category_check');
+
+            DB::statement('ALTER TABLE tickets ALTER COLUMN category TYPE VARCHAR');
         });
     }
 
@@ -22,8 +23,9 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('tickets', function (Blueprint $table) {
-            $table->enum('category', ['standard', 'vip', 'student'])->change();
-        });
+        DB::statement("
+            ALTER TABLE tickets ALTER COLUMN category TYPE VARCHAR;
+            ALTER TABLE tickets ADD CONSTRAINT tickets_category_check CHECK (category IN ('standard','vip','student'))
+        ");
     }
 };

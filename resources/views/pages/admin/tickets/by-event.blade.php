@@ -7,7 +7,7 @@
             'name' => 'category',
             'type' => 'select',
             'label' => 'Category',
-            'options' => ['standard', 'vip', 'student'],
+            'options' => $event->tickets()->pluck('category')->unique()->values()->toArray(),
             'icon' => 'heroicon-o-tag',
         ],
         [
@@ -22,7 +22,18 @@
 @section('content')
     <div class="flex justify-between items-center bg-[#FFEBFA] p-4">
         <h1 class="text-2xl font-bold">Tickets for "{{ $event->title }}"</h1>
+        <a href="{{ route('tickets.create', $event) }}" class="bg-[#6B4E71] text-white px-4 py-2 rounded">Add
+            Category</a>
     </div>
+    @if ($errors->any())
+        <div class="bg-red-100 text-red-600 p-4 mb-4 rounded">
+            <ul class="list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <div class="overflow-x-auto p-4 sm:p-5">
         @if (session('success'))
