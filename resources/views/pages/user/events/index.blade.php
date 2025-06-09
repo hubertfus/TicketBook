@@ -41,7 +41,17 @@
                     </div>
                 </div>
             </div>
-
+            @auth
+                @if (isset($suggestedEvents) && !$suggestedEvents->isEmpty() && !$isAdmin)
+                    <h2 class="text-2xl font-bold mb-6 text-gray-800">Recommended for you</h2>
+                    <div class="flex flex-1 justify-start flex-wrap gap-4 p-4 sm:p-5">
+                        @foreach ($suggestedEvents as $event)
+                            <x-event-card :event="$event" />
+                        @endforeach
+                    </div>
+                @endif
+            @endauth
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">All events</h2>
             <div class="flex flex-1 justify-center flex-wrap gap-4 p-4 sm:p-5">
                 @foreach ($events as $event)
                     <x-event-card :event="$event" />
