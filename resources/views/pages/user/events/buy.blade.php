@@ -66,6 +66,10 @@
 
                 <h2 class="text-xl font-semibold text-[#3A4454] pt-6">Select Tickets</h2>
 
+                @php
+                    $available = $event->totalTickets - $event->ticketSold;
+                @endphp
+
                 @foreach ($event->tickets as $ticket)
                     <div
                         class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-4 py-3 border-b border-[#D7C1D3]">
@@ -75,7 +79,7 @@
                             <span class="text-[#3A4454] font-medium">${{ number_format($ticket->price, 2) }}</span>
                         </div>
                         <input type="number" name="quantities[{{ $ticket->id }}]" min="0"
-                            max="{{ $ticket->quantity }}" data-price="{{ $ticket->price }}"
+                            max="{{ $available }}" data-price="{{ $ticket->price }}"
                             class="ticket-input w-20 px-3 py-2 border border-[#D7C1D3] rounded-lg bg-white text-[#3A4454] focus:ring-2 focus:ring-[#6B4E71]"
                             placeholder="0">
                     </div>

@@ -14,8 +14,7 @@ class Ticket extends Model
     protected $fillable = [
         'event_id',
         'category',
-        'price',
-        'quantity'
+        'price'
     ];
 
     protected $casts = [
@@ -46,13 +45,6 @@ class Ticket extends Model
         return $query->whereBetween('price', [$min, $max]);
     }
 
-    /**
-     * Checks if the ticket is available
-     */
-    public function isAvailable(): bool
-    {
-        return $this->quantity > 0;
-    }
     public function orders()
     {
         return $this->belongsToMany(Order::class, 'order_items')

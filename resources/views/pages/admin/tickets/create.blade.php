@@ -16,24 +16,16 @@
                     <label class="block text-sm font-medium text-[#3A4454] mb-2">
                         @svg('heroicon-o-tag', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Category Name
                     </label>
-                    <input type="text" name="category" required placeholder="e.g. Early Bird"
+                    <input type="text" name="category"
                         class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
                     <div>
                         <label class="block text-sm font-medium text-[#3A4454] mb-2">
                             @svg('heroicon-o-currency-dollar', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Price
                         </label>
                         <input type="number" name="price" step="0.01" min="5" required
-                            class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-[#3A4454] mb-2">
-                            @svg('heroicon-o-archive-box', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Quantity
-                        </label>
-                        <input type="number" name="quantity" min="1" required
                             class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
                     </div>
                 </div>

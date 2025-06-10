@@ -45,14 +45,6 @@
                         class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-[#3A4454] mb-2">
-                        @svg('heroicon-o-archive-box', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Quantity
-                    </label>
-                    <input type="number" name="quantity" value="{{ $ticket->quantity }}" min="0" required
-                        class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
-                </div>
-
                 <div class="pt-6 border-t border-[#6B4E71]/20 flex justify-end gap-4">
                     <a href="{{ route('tickets.byEvent', $ticket->event_id) }}"
                         class="px-6 py-3 rounded-xl bg-transparent border border-[#6B4E71] text-[#6B4E71] hover:bg-[#6B4E71] hover:text-white transition">
