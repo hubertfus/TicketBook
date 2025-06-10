@@ -25,38 +25,24 @@
                     <label class="block text-sm font-medium text-[#3A4454] mb-2">
                         @svg('heroicon-o-calendar-days', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Event
                     </label>
-                    <select name="event_id" required
-                        class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]">
-                        @foreach ($events as $event)
-                            <option value="{{ $event->id }}" {{ $ticket->event_id == $event->id ? 'selected' : '' }}>
-                                {{ $event->title }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <p class="p-3 bg-white rounded-xl shadow-inner">{{ $ticket->event->title }}</p>
+                    <input type="hidden" name="event_id" value="{{ $ticket->event_id }}">
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-[#3A4454] mb-2">
-                            @svg('heroicon-o-tag', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Category
-                        </label>
-                        <select name="category" required
-                            class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]">
-                            <option value="standard" {{ $ticket->category == 'standard' ? 'selected' : '' }}>Standard
-                            </option>
-                            <option value="vip" {{ $ticket->category == 'vip' ? 'selected' : '' }}>VIP</option>
-                            <option value="student" {{ $ticket->category == 'student' ? 'selected' : '' }}>Student</option>
-                        </select>
-                    </div>
+                <div>
+                    <label class="block text-sm font-medium text-[#3A4454] mb-2">
+                        @svg('heroicon-o-tag', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Category
+                    </label>
+                    <p class="p-3 bg-white rounded-xl shadow-inner">{{ ucfirst($ticket->category) }}</p>
+                    <input type="hidden" name="category" value="{{ $ticket->category }}">
+                </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-[#3A4454] mb-2">
-                            @svg('heroicon-o-currency-dollar', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Price
-                        </label>
-                        <input type="number" name="price" value="{{ $ticket->price }}" min="0" step="0.01"
-                            required
-                            class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
-                    </div>
+                <div>
+                    <label class="block text-sm font-medium text-[#3A4454] mb-2">
+                        @svg('heroicon-o-currency-dollar', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Price
+                    </label>
+                    <input type="number" name="price" value="{{ $ticket->price }}" min="0" step="0.01" required
+                        class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
                 </div>
 
                 <div>

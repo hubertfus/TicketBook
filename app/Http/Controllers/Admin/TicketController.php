@@ -63,8 +63,6 @@ class TicketController extends Controller
     public function update(Request $request, Ticket $ticket)
     {
         $validated = $request->validate([
-            'event_id' => 'required|exists:events,id',
-            'category' => 'required|in:standard,vip,student',
             'price' => 'required|numeric|min:5',
             'quantity' => 'required|integer|min:0',
         ]);
