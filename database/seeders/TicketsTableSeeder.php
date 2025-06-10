@@ -24,7 +24,6 @@ class TicketsTableSeeder extends Seeder
                 'event_id' => $event->id,
                 'category' => 'standard',
                 'price' => rand(50, 150),
-                'quantity' => rand(100, 500),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -33,7 +32,6 @@ class TicketsTableSeeder extends Seeder
                 'event_id' => $event->id,
                 'category' => 'vip',
                 'price' => rand(200, 500),
-                'quantity' => rand(20, 100),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -42,7 +40,6 @@ class TicketsTableSeeder extends Seeder
                 'event_id' => $event->id,
                 'category' => 'student',
                 'price' => rand(30, 100),
-                'quantity' => rand(50, 200),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

@@ -59,7 +59,7 @@
                     </button>
                 </form>
                 <a href="{{ route('events.show', $event) }}"
-                    class="flex-1 block text-center py-3 rounded-xl bg-[#E0E0E0] hover:bg-[#CCCCCC] text-[#3A4454] font-semibold transition">
+                    class="flex-1 text-center border border-[#6B4E71] text-[#6B4E71] font-semibold py-2 rounded-xl hover:bg-[#6B4E71] hover:text-white transition">
                     Cancel
                 </a>
             </div>

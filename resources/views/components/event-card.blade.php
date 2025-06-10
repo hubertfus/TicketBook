@@ -52,6 +52,10 @@
         </div>
 
         {{-- Actions --}}
+        @php
+            $remaining = $event->totalTickets - $event->ticketSold;
+            $canBuy = $remaining > 0 && $event->date >= now()->toDateString();
+        @endphp
         <div class="flex flex-1 pt-4">
             @if (auth()->check() && auth()->user()->role === 'admin')
                 <div class="flex flex-1 space-x-4">
@@ -75,13 +79,15 @@
                 </div>
             @else
                 <div class="flex flex-1 space-x-4">
-                    @if ($event->date >= now()->toDateString())
+                    @if ($canBuy)
                         <a href="{{ route('tickets.buy', $event) }}"
-                            class="flex-1 text-center bg-[#6B4E71] text-white font-bold py-2 rounded-xl shadow-md hover:bg-[#593b5c] transition">Buy
-                            Ticket</a>
+                            class="flex-1 text-center bg-[#6B4E71] text-white font-bold py-2 rounded-xl shadow-md hover:bg-[#593b5c] transition">
+                            Buy Ticket
+                        </a>
                     @else
-                        <span class="flex-1 text-center bg-[#E0E0E0] text-[#3A4454] font-bold py-2 rounded-xl">Event
-                            ended</span>
+                        <span class="flex-1 text-center bg-[#E0E0E0] text-[#3A4454] font-bold py-2 rounded-xl">
+                            {{ $event->date < now()->toDateString() ? 'Event ended' : 'Sold out' }}
+                        </span>
                     @endif
                     <a href="{{ route('events.show', $event) }}"
                         class="flex-1 text-center border border-[#6B4E71] text-[#6B4E71] font-semibold py-2 rounded-xl hover:bg-[#6B4E71] hover:text-white transition">Details</a>

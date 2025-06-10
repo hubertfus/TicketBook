@@ -55,10 +55,6 @@ class PaymentController extends Controller
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['price'],
                 ]);
-
-                $ticket = Ticket::find($item['ticket_id']);
-                $ticket->quantity -= $item['quantity'];
-                $ticket->save();
             }
 
             $totalTicketsBought = collect($purchaseData['tickets'])->sum('quantity');

@@ -13,7 +13,7 @@ class TicketPurchaseController extends Controller
         if ($event->date < now()->toDateString()) {
             return redirect()->route('events.index')->with('error', 'This event has already ended.');
         }
-        $tickets = $event->tickets()->where('quantity', '>', 0)->get();
+        $tickets = $event->tickets;
         return view('pages.user.events.buy', compact('event', 'tickets'));
     }
 
@@ -31,6 +31,16 @@ class TicketPurchaseController extends Controller
         $validatedData = [];
         $totalPrice = 0;
 
+        $available = $event->totalTickets - $event->ticketSold;
+
+        $totalSelected = array_sum(array_map('intval', $quantities));
+
+        if ($totalSelected > $available) {
+            return back()->withErrors([
+                'quantities' => "You selected $totalSelected tickets, but only $available are available."
+            ])->withInput();
+        }
+
         foreach ($quantities as $ticketId => $quantity) {
             $quantity = (int) $quantity;
 
@@ -39,10 +49,6 @@ class TicketPurchaseController extends Controller
 
                 if (!$ticket) {
                     return back()->withErrors(['quantities.' . $ticketId => 'Invalid ticket selected.'])->withInput();
-                }
-
-                if ($quantity > $ticket->quantity) {
-                    return back()->withErrors(['quantities.' . $ticketId => 'You cannot buy more tickets than available.'])->withInput();
                 }
 
                 $validatedData[] = [
