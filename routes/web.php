@@ -33,7 +33,7 @@ Route::middleware(['auth', 'check.roles:admin'])->prefix('admin')->group(functio
     Route::get('/refunds', [AdminRefundController::class, 'index'])->name('refunds.index');
     Route::post('/refunds/{refund}/approve', [AdminRefundController::class, 'approve'])->name('refunds.approve');
     Route::post('/refunds/{refund}/reject', [AdminRefundController::class, 'reject'])->name('refunds.reject');
-    Route::resource('reviews', ReviewController::class)->names(['index' => 'admin.reviews.index','show' => 'admin.reviews.show','edit' => 'admin.reviews.edit','update' => 'admin.reviews.update','destroy' => 'admin.reviews.destroy']);
+    Route::resource('reviews', ReviewController::class)->names(['index' => 'admin.reviews.index', 'show' => 'admin.reviews.show', 'edit' => 'admin.reviews.edit', 'update' => 'admin.reviews.update', 'destroy' => 'admin.reviews.destroy']);
     Route::get('', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('events/{event}/tickets', [TicketController::class, 'byEvent'])->name('tickets.byEvent');
     Route::resource('tickets', TicketController::class)->except(['create', 'store', 'show']);
@@ -71,7 +71,10 @@ Route::post('/events/{event}/add-review', [ReviewController::class, 'store'])->n
 
 Route::get('/events/{event}/buy', [TicketPurchaseController::class, 'create'])->name('tickets.buy');
 Route::post('/events/{event}/buy', [TicketPurchaseController::class, 'store'])->name('tickets.store');
-Route::resource('events', UserEventController::class)->only(['index', 'show']);
+Route::prefix('events')->name('user.events.')->group(function () {
+    Route::get('/', [UserEventController::class, 'index'])->name('index');
+    Route::get('/{event}', [UserEventController::class, 'show'])->name('show');
+});
 
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
