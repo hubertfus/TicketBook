@@ -35,44 +35,44 @@
             <div class="lg:col-span-4 lg:ml-[120px]">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-8">
                     <div>
-                        <h4 class="text-base font-bold text-black uppercase">O nas</h4>
+                        <h4 class="text-base font-bold text-black uppercase">About Us</h4>
                         <div class="mt-3 grid space-y-3 text-sm">
-                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Kim
-                                    jesteśmy</a></p>
-                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Kontakt</a>
+                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Who We
+                                    Are</a></p>
+                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Contact</a>
                             </p>
-                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold"
-                                    href="#">Regulamin</a></p>
-                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Polityka
-                                    prywatności</a></p>
+                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Terms of
+                                    Service</a></p>
+                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Privacy
+                                    Policy</a></p>
                         </div>
                     </div>
 
                     <div>
-                        <h4 class="text-base font-bold text-black uppercase">Pomoc</h4>
+                        <h4 class="text-base font-bold text-black uppercase">Help</h4>
                         <div class="mt-3 grid space-y-3 text-sm">
-                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Konto</a>
+                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Account</a>
                             </p>
-                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Zmiana
-                                    danych</a></p>
-                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Zwrot</a>
+                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Update
+                                    Info</a></p>
+                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Refund</a>
                             </p>
                             <p><a class="inline-flex gap-x-2 text-black hover:font-semibold"
-                                    href="#">Ubezpieczenia</a></p>
+                                    href="#">Insurance</a></p>
                         </div>
                     </div>
 
                     <div>
-                        <h4 class="text-base font-bold text-black uppercase">Wydarzenia</h4>
+                        <h4 class="text-base font-bold text-black uppercase">Events</h4>
                         <div class="mt-3 grid space-y-3 text-sm">
-                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Sport</a>
+                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Sports</a>
                             </p>
                             <p><a class="inline-flex gap-x-2 text-black hover:font-semibold"
-                                    href="#">Festiwale</a></p>
-                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Teatr</a>
+                                    href="#">Festivals</a></p>
+                            <p><a class="inline-flex gap-x-2 text-black hover:font-semibold" href="#">Theater</a>
                             </p>
                             <p><a class="inline-flex gap-x-2 text-black hover:font-semibold"
-                                    href="#">Warsztaty</a></p>
+                                    href="#">Workshops</a></p>
                         </div>
                     </div>
                 </div>

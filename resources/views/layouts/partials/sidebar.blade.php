@@ -3,16 +3,15 @@
         ['name' => 'Dashboard', 'route' => 'admin.dashboard', 'icon' => 'heroicon-o-home'],
         ['name' => 'Transactions', 'route' => 'orders.index', 'icon' => 'heroicon-m-arrows-right-left'],
         ['name' => 'Refunds', 'route' => 'refunds.index', 'icon' => 'heroicon-o-receipt-refund'],
-        ['name' => 'Reports', 'route' => 'events.index', 'icon' => 'heroicon-o-document-text'],
         ['name' => 'Users', 'route' => 'users.index', 'icon' => 'heroicon-o-users'],
         ['name' => 'Events', 'route' => 'events.index', 'icon' => 'heroicon-o-calendar-days'],
-        ['name' => "Reviews", 'route' => 'admin.reviews.index', 'icon' => 'heroicon-o-chat-bubble-bottom-center-text'],
-        ['name' => 'Support', 'route' => 'events.index', 'icon' => 'heroicon-o-chat-bubble-left-right'],
+        ['name' => 'Reviews', 'route' => 'admin.reviews.index', 'icon' => 'heroicon-o-chat-bubble-bottom-center-text'],
         ['name' => 'Top-Up Generator', 'route' => 'admin.topup.create', 'icon' => 'heroicon-o-currency-dollar'],
     ];
 @endphp
 
-<div id="sidebar" class="z-50 lg:w-64 bg-[#FFEBFA] shadow-[#FFEBFA] shadow-2xl">
+<div id="sidebar" class="z-50 bg-[#FFEBFA] shadow-[#FFEBFA] shadow-2xl"
+    :class="{ 'lg:w-64': !collapsed, 'lg:w-16': collapsed }">
     {{-- logo --}}
     <div class="flex flex-1 flex-col py-10 px-5 gap-3 align-center">
         <div class="hidden flex-row text-3xl lg:flex">
@@ -46,21 +45,3 @@
         @svg('heroicon-o-arrow-right-circle', 'icon-toggle h-5 w-5 flex-shrink-0 transition-transform duration-300')
     </div>
 </div>
-
-<script>
-    const toggleButton = document.getElementById('toggleButton');
-    const sidebar = document.getElementById('sidebar');
-    const iconToggle = document.querySelector('.icon-toggle');
-
-    toggleButton.addEventListener('click', () => {
-        sidebar.classList.toggle('lg:w-64');
-        sidebar.classList.toggle('lg:w-16');
-
-
-        iconToggle.classList.toggle('rotate-180');
-
-        sidebar.querySelectorAll('ul li div').forEach(el => {
-            el.classList.toggle('hidden');
-        });
-    });
-</script>

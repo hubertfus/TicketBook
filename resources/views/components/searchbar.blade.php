@@ -4,7 +4,7 @@
     $currentParams = request()->all();
 @endphp
 
-<form method="GET" action="{{ $action }}" class=" bg-[#FFEBFA] rounded-2xl shadow-lg p-5">
+<form method="GET" action="{{ $action }}" class="bg-[#FFEBFA] rounded-2xl shadow-lg p-5">
     <div class="flex flex-wrap gap-3 p-4 bg-[#FFF7FD] rounded-2xl shadow-inner">
         @foreach ($filters as $filter)
             @php
@@ -65,4 +65,18 @@
             </svg>
         </button>
     </div>
+
+    {{-- Reset Filters button --}}
+    @if (request()->hasAny(['title', 'location', 'date', 'type', 'filter']))
+        <div class="mt-5 flex">
+            <a href="{{ $action }}"
+                class="inline-flex items-center gap-2 px-6 py-3 bg-[#D7C1D3] text-[#3A4454] text-sm font-semibold rounded-2xl shadow hover:bg-[#caaac3] transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#3A4454]" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Reset filters
+            </a>
+        </div>
+    @endif
 </form>

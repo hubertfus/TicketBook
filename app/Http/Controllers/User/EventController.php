@@ -34,6 +34,24 @@ class EventController extends Controller
             $query->where('type', $request->input('type'));
         }
 
+        if ($request->filled('filter')) {
+            switch ($request->input('filter')) {
+                case 'trending':
+                    $query->orderBy('ticketSold', 'desc');
+                    break;
+
+                case 'new':
+                    $query->orderBy('created_at', 'desc');
+                    break;
+
+                case 'this-weekend':
+                    $startOfWeekend = now()->next(\Carbon\Carbon::FRIDAY)->startOfDay();
+                    $endOfWeekend = now()->next(\Carbon\Carbon::SUNDAY)->endOfDay();
+                    $query->whereBetween('date', [$startOfWeekend, $endOfWeekend]);
+                    break;
+            }
+        }
+
         $events = $query->latest()->paginate(10);
         $types = Event::select('type')->distinct()->pluck('type');
 
@@ -58,7 +76,6 @@ class EventController extends Controller
                     ->unique()
                     ->values();
 
-                // Najczęściej kupowany typ wydarzenia
                 $commonType = Event::whereIn('id', $purchasedEventIds)
                     ->groupBy('type')
                     ->selectRaw('type, count(*) as total')
@@ -66,7 +83,6 @@ class EventController extends Controller
                     ->pluck('type')
                     ->first();
 
-                // Sugestie wydarzeń
                 if ($commonType) {
                     $suggestedEvents = Event::where('type', $commonType)
                         ->whereNotIn('id', $purchasedEventIds)
@@ -84,13 +100,13 @@ class EventController extends Controller
     {
         $reviews = collect();
 
-                $user = auth()->user();
+        $user = auth()->user();
         $canReview = false;
 
         if ($user) {
             $canReview = OrderItem::whereHas('order', function ($query) use ($user) {
-                    $query->where('user_id', $user->id);
-                })
+                $query->where('user_id', $user->id);
+            })
                 ->whereHas('ticket', function ($query) use ($event) {
                     $query->where('event_id', $event->id);
                 })

@@ -13,13 +13,17 @@
 
 </head>
 
-<body class="bg-[#FFF7FD flex flex-col overflow-x-hidden">
+<body class="bg-[#FFF7FD] h-screen flex flex-1 flex-col overflow-x-hidden">
 
     {{-- Header --}}
     @include('layouts.partials.header')
 
     {{-- Page content --}}
-    @yield('content')
+    <div class="flex flex-1 w-full bg-[#FFF7FD] rounded-lg justify-center items-center">
+        <main class="w-full">
+            @yield('content')
+        </main>
+    </div>
 
     {{-- Footer --}}
     @include('layouts.partials.footer')
