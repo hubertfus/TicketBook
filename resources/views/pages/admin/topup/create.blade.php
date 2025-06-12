@@ -1,6 +1,5 @@
 @extends('layouts.admin')
-
-@section('title', 'Generate Top-Up Code')
+@section('title', 'Top-Up Codes')
 
 @php
     $filters = [
@@ -27,74 +26,81 @@
 @endphp
 
 @section('content')
-    <div class="max-w-lg mx-auto mt-10 bg-[#FFEBFA] p-6 rounded-xl shadow-lg">
-        <h2 class="text-xl font-bold text-[#3A4454] mb-4">Generate Top-Up Code</h2>
+    <div class="flex justify-between items-center bg-[#FFEBFA] p-4 rounded-t-xl shadow">
+        <h1 class="text-2xl font-bold text-[#3A4454]">Generate Top-Up Code</h1>
+    </div>
 
-        <form method="POST" action="{{ route('admin.topup.store') }}">
+    <div class="max-w-4xl mx-auto mt-10 p-6 bg-[#FFEBFA] shadow-md rounded-xl">
+        <form method="POST" action="{{ route('admin.topup.store') }}" class="space-y-6">
             @csrf
 
-            <label class="block mb-2 text-[#3A4454]">Select User</label>
-            <select name="user_id" required class="w-full mb-4 p-3 border border-[#D7C1D3] rounded text-[#3A4454]">
-                <option value="">-- Select User --</option>
-                @foreach ($users as $user)
-                    <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                @endforeach
-            </select>
+            <div>
+                <label class="block text-sm font-medium text-[#3A4454] mb-2">Select User</label>
+                <select name="user_id" required
+                    class="w-full px-4 py-3 bg-white rounded-xl shadow-inner border border-[#D7C1D3]">
+                    <option value="">-- Select User --</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                    @endforeach
+                </select>
+            </div>
 
-            <label class="block mb-2 text-[#3A4454]">Amount</label>
-            <input type="number" name="value" step="0.01" min="1" required
-                class="w-full mb-4 p-3 border border-[#D7C1D3] rounded text-[#3A4454]">
+            <div>
+                <label class="block text-sm font-medium text-[#3A4454] mb-2">Amount</label>
+                <input type="number" name="value" step="0.01" min="1" required
+                    class="w-full px-4 py-3 bg-white rounded-xl shadow-inner border border-[#D7C1D3]" />
+            </div>
 
-            <button type="submit" class="w-full bg-[#6B4E71] hover:bg-[#593b5c] text-white font-bold py-3 rounded-xl">
-                Generate Code
-            </button>
+            <div class="pt-4 flex justify-end">
+                <button type="submit"
+                    class="px-8 py-3 rounded-xl bg-gradient-to-r from-[#6B4E71] to-[#8D6595] text-white font-semibold shadow-md hover:opacity-90 transition">
+                    Generate Code
+                </button>
+            </div>
         </form>
     </div>
 
-    {{-- Filters --}}
-    <div class="max-w-6xl mx-auto mt-10">
+    <div class="w-full relative z-20 max-w-7xl mx-auto mt-10 p-4 sm:p-5">
         <x-searchbar :filters="$filters" :action="route('admin.topup.create')" />
     </div>
 
     @if ($codes->count())
-        <div class="max-w-6xl mx-auto mt-6 bg-white shadow-lg rounded-xl overflow-hidden">
-            <h3 class="text-lg font-bold text-[#3A4454] px-6 py-4 bg-[#FFEBFA]">All Generated Top-Up Codes</h3>
-
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm text-left text-gray-700">
-                    <thead class="bg-[#FFF7FD] font-semibold text-[#3A4454]">
+        <div class="max-w-7xl mx-auto overflow-x-auto p-4">
+            <table class="min-w-full bg-[#FFF7FD] shadow rounded-lg overflow-hidden">
+                <thead class="bg-[#FFEBFA] text-gray-700 text-sm font-semibold">
+                    <tr>
+                        <th class="px-4 py-2 text-left">Code</th>
+                        <th class="px-4 py-2 text-left">Amount</th>
+                        <th class="px-4 py-2 text-left">Used</th>
+                        <th class="px-4 py-2 text-left">Assigned To</th>
+                        <th class="px-4 py-2 text-left">Created At</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm text-gray-800 divide-y divide-gray-200">
+                    @foreach ($codes as $code)
                         <tr>
-                            <th class="px-6 py-3">Code</th>
-                            <th class="px-6 py-3">Amount</th>
-                            <th class="px-6 py-3">Used</th>
-                            <th class="px-6 py-3">Assigned To</th>
-                            <th class="px-6 py-3">Created At</th>
+                            <td class="px-4 py-2 font-mono font-bold">{{ $code->code }}</td>
+                            <td class="px-4 py-2">${{ number_format($code->value, 2, ',', ' ') }}</td>
+                            <td class="px-4 py-2">
+                                @if ($code->is_used)
+                                    <span class="text-green-600 font-semibold">Yes</span>
+                                @else
+                                    <span class="text-gray-500">No</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-2">
+                                {{ $code->user?->name ?? '-' }}
+                                <span class="text-xs text-gray-400">({{ $code->user?->email ?? '—' }})</span>
+                            </td>
+                            <td class="px-4 py-2">{{ $code->created_at->format('Y-m-d H:i') }}</td>
                         </tr>
-                    </thead>
-                    <tbody class="divide-y divide-[#F3EAF6]">
-                        @foreach ($codes as $code)
-                            <tr>
-                                <td class="px-6 py-3 font-mono font-bold">{{ $code->code }}</td>
-                                <td class="px-6 py-3">PLN {{ number_format($code->value, 2, ',', ' ') }}</td>
-                                <td class="px-6 py-3">
-                                    @if ($code->is_used)
-                                        <span class="text-green-600 font-semibold">Yes</span>
-                                    @else
-                                        <span class="text-gray-500">No</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-3">
-                                    {{ $code->user?->name ?? '-' }}
-                                    <span class="text-xs text-gray-400">({{ $code->user?->email ?? '—' }})</span>
-                                </td>
-                                <td class="px-6 py-3">{{ $code->created_at->format('Y-m-d H:i') }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
-            <div class="w-full flex justify-center mt-6 py-4">
+        <div class="w-full flex justify-center mt-6 py-6">
+            <div class="max-w-sm">
                 {{ $codes->withQueryString()->links() }}
             </div>
         </div>
