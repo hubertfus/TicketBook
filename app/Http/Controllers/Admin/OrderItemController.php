@@ -14,7 +14,10 @@ class OrderItemController extends Controller
     public function create(Request $request)
     {
         $order = Order::findOrFail($request->input('order_id'));
-        $tickets = Ticket::where('quantity', '>', 0)->get();
+
+        $tickets = Ticket::with('event')->get()->filter(function ($ticket) {
+            return ($ticket->event->totalTickets - $ticket->event->ticketSold) > 0;
+        });
 
         return view('pages.admin.order-items.create', compact('order', 'tickets'));
     }
@@ -35,11 +38,13 @@ class OrderItemController extends Controller
         $order = Order::findOrFail($validated['order_id']);
 
         foreach ($validated['tickets'] as $ticketData) {
-            $ticket = Ticket::findOrFail($ticketData['ticket_id']);
+            $ticket = Ticket::with('event')->findOrFail($ticketData['ticket_id']);
+            $event = $ticket->event;
 
-            if ($ticket->quantity < $ticketData['quantity']) {
+            $available = $event->totalTickets - $event->ticketSold;
+            if ($available < $ticketData['quantity']) {
                 throw ValidationException::withMessages([
-                    'tickets' => ["Not enough tickets available for {$ticket->category} – {$ticket->event->title}."]
+                    'tickets' => ["Not enough tickets available for {$ticket->category} – {$event->title}."]
                 ]);
             }
 
@@ -51,7 +56,8 @@ class OrderItemController extends Controller
                 'total_price' => $ticketData['quantity'] * $ticketData['unit_price'],
             ]);
 
-            $ticket->decrement('quantity', $ticketData['quantity']);
+            $event->ticketSold += $ticketData['quantity'];
+            $event->save();
         }
 
         $order->updateTotalPrice();
@@ -61,8 +67,10 @@ class OrderItemController extends Controller
 
     public function edit(OrderItem $orderItem)
     {
-        $tickets = Ticket::where('quantity', '>', 0)->orWhere('id', $orderItem->ticket_id)->get();
-
+        $tickets = Ticket::with('event')->get()->filter(function ($ticket) use ($orderItem) {
+            $available = $ticket->event->totalTickets - $ticket->event->ticketSold;
+            return $available > 0 || $ticket->id === $orderItem->ticket_id;
+        });
 
         return view('pages.admin.order-items.edit', compact('orderItem', 'tickets'));
     }
@@ -77,16 +85,25 @@ class OrderItemController extends Controller
             'quantity.max' => 'You may only order up to 10 tickets per item.',
         ]);
 
-        $ticket = Ticket::findOrFail($validated['ticket_id']);
-        $oldQuantity = $orderItem->quantity;
+        $ticket = Ticket::with('event')->findOrFail($validated['ticket_id']);
+        $event = $ticket->event;
 
+        $oldQuantity = $orderItem->quantity;
         $quantityDiff = $validated['quantity'] - $oldQuantity;
 
-        if ($quantityDiff > 0 && $ticket->quantity < $quantityDiff) {
-            throw ValidationException::withMessages([
-                'quantity' => ["Not enough tickets available for {$ticket->category} – {$ticket->event->title}."]
-            ]);
+        if ($quantityDiff > 0) {
+            $available = $event->totalTickets - $event->ticketSold;
+            if ($available < $quantityDiff) {
+                throw ValidationException::withMessages([
+                    'quantity' => ["Not enough tickets available for {$ticket->category} – {$event->title}."]
+                ]);
+            }
+
+            $event->ticketSold += $quantityDiff;
+        } elseif ($quantityDiff < 0) {
+            $event->ticketSold -= abs($quantityDiff);
         }
+        $event->save();
 
         $orderItem->update([
             'ticket_id' => $validated['ticket_id'],
@@ -94,13 +111,6 @@ class OrderItemController extends Controller
             'unit_price' => $validated['unit_price'],
             'total_price' => $validated['quantity'] * $validated['unit_price'],
         ]);
-
-        if ($quantityDiff != 0) {
-            $ticket->decrement('quantity', max(0, $quantityDiff));
-            if ($quantityDiff < 0) {
-                $ticket->increment('quantity', abs($quantityDiff));
-            }
-        }
 
         $orderItem->order->updateTotalPrice();
 
@@ -110,9 +120,10 @@ class OrderItemController extends Controller
     public function destroy(OrderItem $orderItem)
     {
         $order = $orderItem->order;
-        $ticket = $orderItem->ticket;
+        $event = $orderItem->ticket->event;
 
-        $ticket->increment('quantity', $orderItem->quantity);
+        $event->ticketSold -= $orderItem->quantity;
+        $event->save();
 
         $orderItem->delete();
         $order->updateTotalPrice();

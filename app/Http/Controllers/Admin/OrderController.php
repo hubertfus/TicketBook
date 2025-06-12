@@ -53,7 +53,10 @@ class OrderController extends Controller
             $query->where('category', request('category'));
         }
 
-        $tickets = $query->where('quantity', '>', 0)->get();
+        $tickets = $query->get()->filter(function ($ticket) {
+            $available = $ticket->event->totalTickets - $ticket->event->ticketSold;
+            return $available > 0;
+        });
 
         return view('pages.admin.orders.create', compact('tickets'));
     }
@@ -78,11 +81,13 @@ class OrderController extends Controller
         ]);
 
         foreach ($validated['tickets'] as $ticketData) {
-            $ticket = Ticket::findOrFail($ticketData['ticket_id']);
+            $ticket = Ticket::with('event')->findOrFail($ticketData['ticket_id']);
+            $event = $ticket->event;
 
-            if ($ticket->quantity < $ticketData['quantity']) {
+            $available = $event->totalTickets - $event->ticketSold;
+            if ($available < $ticketData['quantity']) {
                 throw ValidationException::withMessages([
-                    'tickets' => ["Not enough tickets available for {$ticket->category} – {$ticket->event->title}."]
+                    'tickets' => ["Not enough tickets available for {$ticket->category} – {$event->title}."]
                 ]);
             }
 
@@ -94,9 +99,9 @@ class OrderController extends Controller
                 'total_price' => $ticketData['quantity'] * $ticketData['unit_price'],
             ]);
 
-            $ticket->decrement('quantity', $ticketData['quantity']);
+            $event->ticketSold += $ticketData['quantity'];
+            $event->save();
         }
-
         $order->updateTotalPrice();
 
         return redirect()->route('orders.index')->with('success', 'Order created successfully!');
@@ -106,7 +111,9 @@ class OrderController extends Controller
     {
         $order->load(['user', 'orderItems.ticket']);
 
-        $tickets = Ticket::with('event')->where('quantity', '>', 0)->get();
+        $tickets = Ticket::with('event')->get()->filter(function ($ticket) {
+            return ($ticket->event->totalTickets - $ticket->event->ticketSold) > 0;
+        });
 
         return view('pages.admin.orders.edit', compact('order', 'tickets'));
     }
@@ -125,19 +132,27 @@ class OrderController extends Controller
             'tickets.*.quantity.max' => 'You may only order up to 10 tickets per item.',
         ]);
 
+        foreach ($order->orderItems as $item) {
+            $event = $item->ticket->event;
+            $event->ticketSold -= $item->quantity;
+            $event->save();
+        }
+
+        $order->orderItems()->delete();
+
         $order->update([
             'user_id' => $validated['user_id'],
             'status' => $validated['status'],
         ]);
 
-        $order->orderItems()->delete();
-
         foreach ($validated['tickets'] as $ticketData) {
-            $ticket = Ticket::findOrFail($ticketData['ticket_id']);
+            $ticket = Ticket::with('event')->findOrFail($ticketData['ticket_id']);
+            $event = $ticket->event;
 
-            if ($ticket->quantity < $ticketData['quantity']) {
+            $available = $event->totalTickets - $event->ticketSold;
+            if ($available < $ticketData['quantity']) {
                 throw ValidationException::withMessages([
-                    'tickets' => ["Not enough tickets available for {$ticket->category} – {$ticket->event->title}."]
+                    'tickets' => ["Not enough tickets available for {$ticket->category} – {$event->title}."]
                 ]);
             }
 
@@ -147,6 +162,9 @@ class OrderController extends Controller
                 'unit_price' => $ticketData['unit_price'],
                 'total_price' => $ticketData['quantity'] * $ticketData['unit_price'],
             ]);
+
+            $event->ticketSold += $ticketData['quantity'];
+            $event->save();
         }
 
         $order->updateTotalPrice();
