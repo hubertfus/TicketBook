@@ -1,4 +1,7 @@
-<header class="flex flex-wrap items-center bg-[#FFEBFA] border-b border-[#D7C1D3] py-5 px-6">
+<header
+    class="flex flex-wrap items-center bg-[#FFEBFA] backdrop-blur-sm shadow-[0_6px_8px_rgba(230,210,225,0.5)] py-5 px-6">
+
+
     <nav class="flex flex-wrap items-center justify-between w-full max-w-7xl mx-auto gap-6">
 
         <!-- Logo -->
