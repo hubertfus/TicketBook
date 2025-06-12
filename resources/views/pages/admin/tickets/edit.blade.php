@@ -23,25 +23,23 @@
 
                 <div>
                     <label class="block text-sm font-medium text-[#3A4454] mb-2">
-                        @svg('heroicon-o-calendar-days', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Event
-                    </label>
+                        @svg('heroicon-o-calendar-days', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Event </label>
                     <p class="p-3 bg-white rounded-xl shadow-inner">{{ $ticket->event->title }}</p>
-                    <input type="hidden" name="event_id" value="{{ $ticket->event_id }}">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-[#3A4454] mb-2">
                         @svg('heroicon-o-tag', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Category
                     </label>
-                    <p class="p-3 bg-white rounded-xl shadow-inner">{{ ucfirst($ticket->category) }}</p>
-                    <input type="hidden" name="category" value="{{ $ticket->category }}">
+                    <input type="text" name="category"
+                        value="{{ old('category', $ticket->category) }}"class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-[#3A4454] mb-2">
                         @svg('heroicon-o-currency-dollar', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Price
                     </label>
-                    <input type="number" name="price" value="{{ $ticket->price }}" min="0" step="0.01" required
+                    <input type="number" name="price" value="{{ $ticket->price }}" min="5" step="0.01" required
                         class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
                 </div>
 

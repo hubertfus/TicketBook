@@ -3,6 +3,15 @@
 @section('title', 'Add Ticket Category for ' . $event->title)
 
 @section('content')
+    @if ($errors->any())
+        <div class="bg-red-100 text-red-600 p-4 mb-4 rounded-2xl shadow-inner">
+            <ul class="list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <div class="min-h-screen bg-[#FFF7FD] py-10 px-4">
         <div class="max-w-3xl mx-auto bg-[#FFEBFA] rounded-2xl shadow-lg p-8">
             <h2 class="text-3xl font-extrabold text-[#3A4454] flex items-center gap-2 mb-6">

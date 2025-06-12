@@ -21,6 +21,14 @@ class TicketController extends Controller
             'price' => 'required|numeric|min:5',
         ]);
 
+        $exists = $event->tickets()->whereRaw('LOWER(category) = ?', [strtolower($validated['category'])])->exists();
+
+        if ($exists) {
+            return back()->withErrors([
+                'category' => 'This category already exists for this event.',
+            ])->withInput();
+        }
+
         $event->tickets()->create($validated);
 
         return redirect()
@@ -48,21 +56,32 @@ class TicketController extends Controller
 
     public function edit(Ticket $ticket)
     {
-        $events = Event::all();
-        return view('pages.admin.tickets.edit', compact('ticket', 'events'));
+        return view('pages.admin.tickets.edit', compact('ticket'));
     }
 
     public function update(Request $request, Ticket $ticket)
     {
         $validated = $request->validate([
+            'category' => 'required|string|max:255',
             'price' => 'required|numeric|min:5',
         ]);
+
+        $exists = Ticket::where('event_id', $ticket->event_id)
+            ->whereRaw('LOWER(category) = ?', [strtolower($validated['category'])])
+            ->where('id', '!=', $ticket->id)
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors([
+                'category' => 'This category already exists for this event.',
+            ])->withInput();
+        }
 
         $ticket->update($validated);
 
         return redirect()
             ->route('tickets.byEvent', $ticket->event_id)
-            ->with('success', 'Ticket price updated.');
+            ->with('success', 'Ticket updated.');
     }
 
     public function destroy(Ticket $ticket)
