@@ -1,9 +1,44 @@
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 <style>
+    .carousel-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .swiper {
+        width: 100%;
+        padding: 0 3rem;
+    }
+
+    .swiper-wrapper {
+        display: flex;
+        align-items: stretch;
+    }
+
+    .swiper-slide {
+        height: auto;
+        display: flex;
+        align-items: stretch;
+    }
+
+    .swiper-slide>div {
+        width: 100%;
+        display: flex;
+    }
+
+    .carousel-card {
+        width: 100%;
+        display: flex;
+    }
+
     .swiper-button-prev,
     .swiper-button-next {
         color: #6B4E71;
-        position: relative;
-        top: auto;
+        position: absolute;
+        top: 50%;
         transform: none;
         width: 3.5rem;
         height: 3.5rem;
@@ -23,59 +58,38 @@
         right: 0.5rem;
     }
 
+    .swiper-button-prev:after,
+    .swiper-button-next:after {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .swiper-button-disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
     .swiper-pagination {
         position: relative;
-        margin-top: 1rem;
+        margin-top: 2rem;
         bottom: auto;
     }
 
     .swiper-pagination-bullet {
         background-color: #d1d5db;
         opacity: 1;
+        width: 8px;
+        height: 8px;
     }
 
     .swiper-pagination-bullet-active {
         background-color: #6B4E71;
     }
 
-    .swiper-slide {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .swiper-slide::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        top: 0;
-        pointer-events: none;
-        border-radius: 0.5rem;
-        mix-blend-mode: screen;
-        transition: background 0.3s ease;
-    }
-
-    .swiper-slide img {
-        width: 100%;
-        height: auto;
-        max-height: 24rem;
-        object-fit: cover;
-        border-radius: 0.5rem;
-    }
-
-    .swiper-container {
-        width: 100%;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .swiper {
-        width: 100%;
-    }
-
     @media (max-width: 639px) {
+        .swiper {
+            padding: 0;
+        }
 
         .swiper-button-prev,
         .swiper-button-next {
@@ -84,54 +98,62 @@
     }
 </style>
 
-<div class="relative max-w-7xl flex items-center mb-4">
-    <button class="swiper-button-prev focus:outline-none" aria-label="Previous slide"></button>
-
-    <div class="swiper-container">
-        <div class="swiper rounded-lg p-6 flex-1">
-            <div class="swiper-wrapper">
-                @foreach ($slides as $slide)
-                    <div class="swiper-slide flex justify-center items-center">
-                        <img src="{{ asset($slide['image']) }}" alt="{{ $slide['alt'] ?? 'Slide' }}"
-                            class="rounded-lg object-cover" />
+<div class="carousel-container">
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            @foreach ($events as $event)
+                <div class="swiper-slide">
+                    <div class="carousel-card">
+                        {{-- Karta wydarzenia --}}
+                        <x-event-card :event="$event" class="carousel-card" />
                     </div>
-                @endforeach
-            </div>
+                </div>
+            @endforeach
         </div>
         <div class="swiper-pagination"></div>
     </div>
 
-    <button class="swiper-button-next focus:outline-none" aria-label="Next slide"></button>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        new Swiper(".swiper", {
+        const swiper = new Swiper('.mySwiper', {
             slidesPerView: 1,
-            spaceBetween: 16,
-            loop: true,
+            spaceBetween: 20,
+            loop: false,
+            watchOverflow: true,
             pagination: {
-                el: ".swiper-pagination",
+                el: '.swiper-pagination',
                 clickable: true,
             },
             navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev",
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
             },
             breakpoints: {
                 640: {
                     slidesPerView: 1,
-                    spaceBetween: 16,
+                    spaceBetween: 20,
                 },
                 768: {
                     slidesPerView: 2,
-                    spaceBetween: 20,
+                    spaceBetween: 24,
                 },
                 1024: {
                     slidesPerView: 3,
-                    spaceBetween: 24,
+                    spaceBetween: 50,
                 },
             },
+            on: {
+                init: function() {
+                    this.updateAutoHeight(0);
+                },
+                slideChange: function() {
+                    this.updateAutoHeight(300);
+                }
+            }
         });
     });
 </script>

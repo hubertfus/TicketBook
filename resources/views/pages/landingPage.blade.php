@@ -29,6 +29,9 @@
             'icon' => 'heroicon-o-tag',
         ],
     ];
+
+    // Pobierz wydarzenia do karuzeli - możesz dostosować warunki
+    $featuredEvents = \App\Models\Event::where('date', '>=', now())->orderBy('date', 'asc')->take(6)->get();
 @endphp
 
 @section('content')
@@ -81,14 +84,7 @@
                 Discover events you must experience live
             </small>
             @include('components.carousel', [
-                'slides' => [
-                    ['image' => 'images/ticket.jpg', 'alt' => 'Slide 1'],
-                    ['image' => 'images/ticket.jpg', 'alt' => 'Slide 2'],
-                    ['image' => 'images/ticket.jpg', 'alt' => 'Slide 3'],
-                    ['image' => 'images/ticket.jpg', 'alt' => 'Slide 4'],
-                    ['image' => 'images/ticket.jpg', 'alt' => 'Slide 5'],
-                    ['image' => 'images/ticket.jpg', 'alt' => 'Slide 6'],
-                ],
+                'events' => $featuredEvents,
             ])
         </div>
     </div>
