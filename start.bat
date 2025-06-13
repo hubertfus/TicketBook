@@ -3,54 +3,68 @@ echo ===============================
 echo Laravel Starter Script
 echo ===============================
 
-REM Sprawdź, czy jest composer
-where composer >nul 2>nul
+REM Check if composer is installed
+where.exe composer >nul 2>nul
 IF %ERRORLEVEL% NEQ 0 (
-    echo Composer nie jest zainstalowany lub nie dodany do PATH.
+    echo Composer is not installed or not added to PATH.
     pause
     exit /b
 )
 
-REM Sprawdź, czy jest docker
-where docker >nul 2>nul
+REM Check if postgres is installed and in PATH
+where.exe postgres >nul 2>nul
 IF %ERRORLEVEL% NEQ 0 (
-    echo Docker nie jest zainstalowany lub nie dodany do PATH.
+    echo PostgreSQL is not installed or not added to PATH.
     pause
     exit /b
 )
 
-REM Uruchomienie kontenera PostgreSQL, jeśli nie działa
-echo Sprawdzanie, czy kontener PostgreSQL już działa...
-docker ps --filter "name=laravel-postgres" --format "{{.Names}}" | findstr "laravel-postgres" >nul
-IF %ERRORLEVEL% NEQ 0 (
-    echo Uruchamianie kontenera PostgreSQL...
-    docker rm -f laravel-postgres
-    docker run --name laravel-postgres ^
-    -e POSTGRES_USER=laravel ^
-    -e POSTGRES_PASSWORD=secret ^
-    -e POSTGRES_DB=laravel ^
-    -p 5432:5432 ^
-    -d postgres:12
-) ELSE (
-    echo Kontener PostgreSQL już działa.
+REM Get full path to postgres.exe
+for /f "delims=" %%i in ('where.exe postgres') do (
+    set "PG_EXE=%%i"
+    set "PG_PATH=%%~dpi"
 )
 
-REM Instalacja zależności
-echo Instalowanie zależności przez Composer...
+echo Found postgres.exe at: %PG_EXE%
+echo PostgreSQL bin directory: %PG_PATH%
+
+REM Check if PostgreSQL is running
+echo Checking if PostgreSQL server is running...
+tasklist.exe /FI "IMAGENAME eq postgres.exe" | findstr /I "postgres.exe" >nul
+IF %ERRORLEVEL% NEQ 0 (
+    echo PostgreSQL is not running.
+
+    REM Check if pg_ctl.exe exists in the bin directory
+    if exist "%PG_PATH%pg_ctl.exe" (
+        REM NOTE: PROVIDE THE CORRECT DATA DIRECTORY PATH:
+        "%PG_PATH%pg_ctl.exe" start -D "C:\Program Files\PostgreSQL\17\data" -l logfile
+    ) else (
+        echo pg_ctl.exe not found in %PG_PATH%. Please check your PostgreSQL installation.
+        pause
+        exit /b
+    )
+
+    timeout /t 5
+) else (
+    echo PostgreSQL is already running.
+)
+
+REM Install PHP dependencies using Composer
+echo Installing PHP dependencies via Composer...
 call composer install
 
-REM Tworzenie .env jeśli nie istnieje
+REM Create .env if it does not exist
 IF NOT EXIST ".env" (
-    echo Tworzenie pliku .env...
+    echo Creating .env file...
     copy .env.example .env
 )
 
-REM Generowanie klucza aplikacji
-echo Generowanie klucza aplikacji...
+REM Generate application key
+echo Generating Laravel application key...
 call php artisan key:generate
 
-REM Uruchamianie migracji
-echo Uruchamianie migracji...
+REM Run database migrations
+echo Running database migrations...
 call php artisan migrate
 call php artisan db:seed
 call php artisan storage:link
@@ -60,13 +74,13 @@ set DEST=public\storage\seedImage.jpg
 
 if exist "%SOURCE%" (
     copy /Y "%SOURCE%" "%DEST%"
-    echo Plik został skopiowany jako %DEST%
+    echo File copied as %DEST%
 ) else (
-    echo Nie znaleziono pliku źródłowego: %SOURCE%
+    echo Source file not found: %SOURCE%
 )
 
-REM Uruchamianie serwera
-echo Start serwera aplikacji...
+REM Start application servers
+echo Starting application server...
 start http://127.0.0.1:8000
 
 call npm install
