@@ -49,7 +49,7 @@
                     @forelse ($orders as $order)
                         <tr>
                             <td class="px-4 py-2 capitalize">{{ $order->status }}</td>
-                            <td class="px-4 py-2">PLN {{ number_format($order->total_price, 2, ',', ' ') }}</td>
+                            <td class="px-4 py-2">{{ number_format($order->total_price, 2, ',', ' ') }} PLN</td>
                             <td class="px-4 py-2">{{ $order->created_at->format('Y-m-d H:i') }}</td>
                             <td class="px-4 py-2">
                                 <div class="flex flex-col space-y-1">

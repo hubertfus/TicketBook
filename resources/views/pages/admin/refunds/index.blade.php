@@ -61,10 +61,8 @@
                 @forelse ($refunds as $refund)
                     <tr>
                         <td class="px-4 py-2">#{{ $refund->order->id }}</td>
-                        <td class="px-4 py-2">{{ $refund->order->user->name ?? '–' }}
-                            ({{ $refund->order->user->email ?? '–' }})
-                        </td>
-                        <td class="px-4 py-2">PLN {{ number_format($refund->order->total_price, 2, ',', ' ') }}</td>
+                        <td class="px-4 py-2">{{ $refund->order->user->name ?? '–' }} ({{ $refund->order->user->email ?? '–' }})</td>
+                        <td class="px-4 py-2">{{ number_format($refund->order->total_price, 2, ',', ' ') }} PLN</td>
                         <td class="px-4 py-2">{{ $refund->reason }}</td>
                         <td class="px-4 py-2 capitalize">{{ $refund->status }}</td>
                         <td class="px-4 py-2 space-x-2">

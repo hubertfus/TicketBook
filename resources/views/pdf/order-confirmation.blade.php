@@ -109,14 +109,14 @@
                 <tr>
                     <td>{{ ucfirst($item->ticket->category) }}</td>
                     <td>{{ $item->quantity }}</td>
-                    <td>${{ number_format($item->unit_price, 2, ',', ' ') }}</td>
-                    <td>${{ number_format($item->total_price, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($item->unit_price, 2, ',', ' ') }} PLN</td>
+                    <td>{{ number_format($item->total_price, 2, ',', ' ') }} PLN</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
 
-    <p class="total">Total Paid: ${{ number_format($order->total_price, 2, ',', ' ') }}</p>
+    <p class="total">Total Paid: {{ number_format($order->total_price, 2, ',', ' ') }} PLN</p>
 
     <p class="footer">
         This is an automatically generated confirmation.

@@ -37,8 +37,8 @@
                 </div>
                 <div>
                     <label class="text-sm font-medium text-gray-600">Total Price</label>
-                    <p class="mt-1 text-sm font-bold text-gray-900">PLN
-                        {{ number_format($order->total_price, 2, ',', ' ') }}</p>
+                    <p class="mt-1 text-sm font-bold text-gray-900">
+                        {{ number_format($order->total_price, 2, ',', ' ') }} PLN</p>
                 </div>
                 <div>
                     <label class="text-sm font-medium text-gray-600">Order Date</label>
@@ -77,9 +77,9 @@
                                 </span>
                             </td>
                             <td class="px-4 py-2 text-center font-medium">{{ $item->quantity }}</td>
-                            <td class="px-4 py-2 text-right">PLN {{ number_format($item->unit_price, 2, ',', ' ') }}</td>
-                            <td class="px-4 py-2 text-right font-medium">PLN
-                                {{ number_format($item->total_price, 2, ',', ' ') }}</td>
+                            <td class="px-4 py-2 text-right">{{ number_format($item->unit_price, 2, ',', ' ') }} PLN</td>
+                            <td class="px-4 py-2 text-right font-medium">
+                                {{ number_format($item->total_price, 2, ',', ' ') }} PLN</td>
                         </tr>
                     @empty
                         <tr>
@@ -90,8 +90,8 @@
                 <tfoot class="bg-[#FFEBFA]">
                     <tr>
                         <td colspan="4" class="px-4 py-2 text-right font-semibold">Total Order Amount:</td>
-                        <td class="px-4 py-2 text-right font-bold text-lg">PLN
-                            {{ number_format($order->total_price, 2, ',', ' ') }}</td>
+                        <td class="px-4 py-2 text-right font-bold text-lg">
+                            {{ number_format($order->total_price, 2, ',', ' ') }} PLN</td>
                     </tr>
                 </tfoot>
             </table>

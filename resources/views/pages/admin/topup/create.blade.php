@@ -65,39 +65,42 @@
     </div>
 
     @if ($codes->count())
-        <div class="max-w-7xl mx-auto overflow-x-auto p-4">
-            <table class="min-w-full bg-[#FFF7FD] shadow rounded-lg overflow-hidden">
-                <thead class="bg-[#FFEBFA] text-gray-700 text-sm font-semibold">
-                    <tr>
-                        <th class="px-4 py-2 text-left">Code</th>
-                        <th class="px-4 py-2 text-left">Amount</th>
-                        <th class="px-4 py-2 text-left">Used</th>
-                        <th class="px-4 py-2 text-left">Assigned To</th>
-                        <th class="px-4 py-2 text-left">Created At</th>
-                    </tr>
-                </thead>
-                <tbody class="text-sm text-gray-800 divide-y divide-gray-200">
-                    @foreach ($codes as $code)
+        <div class="max-w-6xl mx-auto mt-6 bg-white shadow-lg rounded-xl overflow-hidden">
+            <h3 class="text-lg font-bold text-[#3A4454] px-6 py-4 bg-[#FFEBFA]">All Generated Top-Up Codes</h3>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-left text-gray-700">
+                    <thead class="bg-[#FFF7FD] font-semibold text-[#3A4454]">
                         <tr>
-                            <td class="px-4 py-2 font-mono font-bold">{{ $code->code }}</td>
-                            <td class="px-4 py-2">${{ number_format($code->value, 2, ',', ' ') }}</td>
-                            <td class="px-4 py-2">
-                                @if ($code->is_used)
-                                    <span class="text-green-600 font-semibold">Yes</span>
-                                @else
-                                    <span class="text-gray-500">No</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-2">
-                                {{ $code->user?->name ?? '-' }}
-                                <span class="text-xs text-gray-400">({{ $code->user?->email ?? '—' }})</span>
-                            </td>
-                            <td class="px-4 py-2">{{ $code->created_at->format('Y-m-d H:i') }}</td>
+                            <th class="px-6 py-3">Code</th>
+                            <th class="px-6 py-3">Amount</th>
+                            <th class="px-6 py-3">Used</th>
+                            <th class="px-6 py-3">Assigned To</th>
+                            <th class="px-6 py-3">Created At</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody class="divide-y divide-[#F3EAF6]">
+                        @foreach ($codes as $code)
+                            <tr>
+                                <td class="px-6 py-3 font-mono font-bold">{{ $code->code }}</td>
+                                <td class="px-6 py-3">{{ number_format($code->value, 2, ',', ' ') }} PLN</td>
+                                <td class="px-6 py-3">
+                                    @if ($code->is_used)
+                                        <span class="text-green-600 font-semibold">Yes</span>
+                                    @else
+                                        <span class="text-gray-500">No</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-3">
+                                    {{ $code->user?->name ?? '-' }}
+                                    <span class="text-xs text-gray-400">({{ $code->user?->email ?? '—' }})</span>
+                                </td>
+                                <td class="px-6 py-3">{{ $code->created_at->format('Y-m-d H:i') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
         <div class="w-full flex justify-center mt-6 py-6">
             <div class="max-w-sm">
