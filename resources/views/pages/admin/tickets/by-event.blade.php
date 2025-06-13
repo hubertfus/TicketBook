@@ -61,7 +61,7 @@
                     <tr>
                         <td class="px-4 py-2">#{{ $ticket->id }}</td>
                         <td class="px-4 py-2 capitalize">{{ $ticket->category }}</td>
-                        <td class="px-4 py-2">${{ number_format($ticket->price, 2, ',', ' ') }}</td>
+                        <td class="px-4 py-2">{{ number_format($ticket->price, 2, ',', ' ') }} PLN</td>
                         <td class="px-4 py-2">
                             <div class="flex items-center space-x-2">
                                 <a href="{{ route('admin.tickets.edit', $ticket) }}"

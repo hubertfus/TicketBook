@@ -10,7 +10,7 @@
                 <div class="flex items-center gap-2 bg-white/50 px-5 py-2 rounded-xl shadow-inner">
                     @svg('heroicon-o-banknotes', 'h-5 w-5 text-[#6B4E71]')
                     <span class="font-medium text-[#3A4454]">
-                        ${{ number_format(auth()->user()->balance, 2) }}
+                        {{ number_format(auth()->user()->balance, 2) }} PLN
                     </span>
                 </div>
             </div>
@@ -28,7 +28,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="font-semibold">Total Price:</span>
-                    <span>${{ number_format($total, 2) }}</span>
+                    <span>{{ number_format($total, 2) }} PLN</span>
                 </div>
 
                 <div>
@@ -37,7 +37,7 @@
                         @foreach ($tickets as $ticket)
                             <li>
                                 {{ $ticket['quantity'] }} × {{ ucfirst($ticket['category']) }} —
-                                ${{ number_format($ticket['price'], 2) }} each
+                                {{ number_format($ticket['price'], 2) }} PLN each
                             </li>
                         @endforeach
                     </ul>
