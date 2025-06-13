@@ -40,7 +40,7 @@
                 </div>
 
                 <div class="pt-6 border-t border-[#6B4E71]/20 flex justify-end gap-4">
-                    <a href="{{ route('tickets.byEvent', $event) }}"
+                    <a href="{{ route('admin.tickets.byEvent', $event) }}"
                         class="px-6 py-3 rounded-xl bg-transparent border border-[#6B4E71] text-[#6B4E71] hover:bg-[#6B4E71] hover:text-white transition">
                         Cancel
                     </a>

@@ -169,12 +169,12 @@ class OrderController extends Controller
 
         $order->updateTotalPrice();
 
-        return redirect()->route('orders.index')->with('success', 'Order updated!');
+        return redirect()->route('admin.orders.index')->with('success', 'Order updated!');
     }
 
     public function destroy(Order $order)
     {
         $order->delete();
-        return redirect()->route('orders.index')->with('success', 'Order deleted!');
+        return redirect()->route('admin.orders.index')->with('success', 'Order deleted!');
     }
 }

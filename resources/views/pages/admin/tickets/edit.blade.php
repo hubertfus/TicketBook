@@ -17,7 +17,7 @@
                 @svg('heroicon-o-pencil-square', 'w-6 h-6 text-[#6B4E71]') Edit Ticket
             </h2>
 
-            <form action="{{ route('tickets.update', $ticket) }}" method="POST" class="space-y-6">
+            <form action="{{ route('admin.tickets.update', $ticket) }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
 
@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="pt-6 border-t border-[#6B4E71]/20 flex justify-end gap-4">
-                    <a href="{{ route('tickets.byEvent', $ticket->event_id) }}"
+                    <a href="{{ route('admin.tickets.byEvent', $ticket->event_id) }}"
                         class="px-6 py-3 rounded-xl bg-transparent border border-[#6B4E71] text-[#6B4E71] hover:bg-[#6B4E71] hover:text-white transition">
                         Cancel
                     </a>

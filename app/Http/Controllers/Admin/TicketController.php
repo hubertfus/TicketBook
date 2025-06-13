@@ -32,7 +32,7 @@ class TicketController extends Controller
         $event->tickets()->create($validated);
 
         return redirect()
-            ->route('tickets.byEvent', $event->id)
+            ->route('admin.tickets.byEvent', $event->id)
             ->with('success', 'New ticket category added successfully.');
     }
 
@@ -80,7 +80,7 @@ class TicketController extends Controller
         $ticket->update($validated);
 
         return redirect()
-            ->route('tickets.byEvent', $ticket->event_id)
+            ->route('admin.tickets.byEvent', $ticket->event_id)
             ->with('success', 'Ticket updated.');
     }
 
@@ -97,7 +97,7 @@ class TicketController extends Controller
         $ticket->delete();
 
         return redirect()
-            ->route('tickets.byEvent', $event->id)
+            ->route('admin.tickets.byEvent', $event->id)
             ->with('success', 'Ticket category deleted.');
     }
 }
