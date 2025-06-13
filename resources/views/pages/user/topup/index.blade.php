@@ -33,7 +33,7 @@
                     @foreach ($codes as $code)
                         <tr class="border-b border-[#D7C1D3]">
                             <td class="py-2 font-mono break-words">{{ $code->code }}</td>
-                            <td class="py-2">${{ number_format($code->value, 2) }}</td>
+                            <td class="py-2">{{ number_format($code->value, 2) }} PLN</td>
                             <td class="py-2">
                                 @if ($code->is_used)
                                     <span class="text-green-600 font-semibold">Yes</span>
