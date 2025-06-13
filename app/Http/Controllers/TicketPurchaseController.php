@@ -73,8 +73,7 @@ class TicketPurchaseController extends Controller
             'total' => $totalPrice,
         ]);
 
-        return redirect()->route('payment.show', ['event' => $event->id])
+        return redirect()->route('user.payment.show', ['event' => $event->id])
             ->with('info', 'Redirected to payment');
     }
-
 }

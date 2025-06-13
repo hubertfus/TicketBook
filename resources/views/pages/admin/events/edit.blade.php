@@ -17,7 +17,8 @@
                 @svg('heroicon-o-pencil-square', 'w-6 h-6 text-[#6B4E71]') Edit Event
             </h2>
 
-            <form action="{{ route('events.update', $event) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form action="{{ route('admin.events.update', $event) }}" method="POST" enctype="multipart/form-data"
+                class="space-y-6">
                 @csrf
                 @method('PUT')
 
@@ -142,7 +143,7 @@
 
                 {{-- Actions --}}
                 <div class="pt-6 border-t border-[#6B4E71]/20 flex justify-end gap-4">
-                    <a href="{{ route('events.index') }}"
+                    <a href="{{ route('admin.events.index') }}"
                         class="px-6 py-3 rounded-xl bg-transparent border border-[#6B4E71] text-[#6B4E71] hover:bg-[#6B4E71] hover:text-white transition">Cancel</a>
                     <button type="submit"
                         class="px-8 py-3 rounded-xl bg-gradient-to-r from-[#6B4E71] to-[#8D6595] text-white font-semibold shadow-md hover:opacity-90 transition">Update

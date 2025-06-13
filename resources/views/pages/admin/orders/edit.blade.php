@@ -17,7 +17,7 @@
                 @svg('heroicon-o-pencil-square', 'w-6 h-6 text-[#6B4E71]') Edit Order
             </h2>
 
-            <form action="{{ route('orders.update', $order) }}" method="POST" class="space-y-6">
+            <form action="{{ route('admin.orders.update', $order) }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
 
@@ -104,7 +104,7 @@
 
                 {{-- Submit --}}
                 <div class="pt-6 border-t border-[#6B4E71]/20 flex justify-end gap-4">
-                    <a href="{{ route('orders.index') }}"
+                    <a href="{{ route('admin.orders.index') }}"
                         class="px-6 py-3 rounded-xl bg-transparent border border-[#6B4E71] text-[#6B4E71] hover:bg-[#6B4E71] hover:text-white transition">Cancel</a>
                     <button type="submit"
                         class="px-8 py-3 rounded-xl bg-gradient-to-r from-[#6B4E71] to-[#8D6595] text-white font-semibold shadow-md hover:opacity-90 transition">Save
@@ -114,102 +114,102 @@
         </div>
     </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        let ticketIndex = {{ count(old('tickets', $order->orderItems)) }};
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let ticketIndex = {{ count(old('tickets', $order->orderItems)) }};
 
-        function updateTotal() {
-            let total = 0;
-            document.querySelectorAll('.ticket-item').forEach(item => {
-                const qty = item.querySelector('.ticket-quantity').value;
-                const price = item.querySelector('.ticket-price').value;
-                total += parseFloat(qty || 0) * parseFloat(price || 0);
-            });
-            document.getElementById('total-amount').textContent = total.toFixed(2);
-        }
-
-        function setPriceFromSelect(select) {
-            const selected = select.options[select.selectedIndex];
-            const price = selected.getAttribute('data-price');
-            const container = select.closest('.ticket-item');
-            container.querySelector('.ticket-price').value = price;
-            updateTotal();
-        }
-
-        function getSelectedTicketIds() {
-            return Array.from(document.querySelectorAll('.ticket-select'))
-                .map(select => select.value)
-                .filter(id => id !== '');
-        }
-
-        function hasDuplicateTicketIds() {
-            const ids = getSelectedTicketIds();
-            return new Set(ids).size !== ids.length;
-        }
-
-        function validateAll() {
-            if (hasDuplicateTicketIds()) {
-                alert("You can't select the same ticket more than once.");
-                return false;
+            function updateTotal() {
+                let total = 0;
+                document.querySelectorAll('.ticket-item').forEach(item => {
+                    const qty = item.querySelector('.ticket-quantity').value;
+                    const price = item.querySelector('.ticket-price').value;
+                    total += parseFloat(qty || 0) * parseFloat(price || 0);
+                });
+                document.getElementById('total-amount').textContent = total.toFixed(2);
             }
 
-            let valid = true;
-            document.querySelectorAll('.ticket-quantity').forEach(input => {
-                const val = parseInt(input.value);
-                if (val > 10) {
-                    alert("Maximum quantity per ticket is 10.");
-                    input.value = 10;
-                    valid = false;
+            function setPriceFromSelect(select) {
+                const selected = select.options[select.selectedIndex];
+                const price = selected.getAttribute('data-price');
+                const container = select.closest('.ticket-item');
+                container.querySelector('.ticket-price').value = price;
+                updateTotal();
+            }
+
+            function getSelectedTicketIds() {
+                return Array.from(document.querySelectorAll('.ticket-select'))
+                    .map(select => select.value)
+                    .filter(id => id !== '');
+            }
+
+            function hasDuplicateTicketIds() {
+                const ids = getSelectedTicketIds();
+                return new Set(ids).size !== ids.length;
+            }
+
+            function validateAll() {
+                if (hasDuplicateTicketIds()) {
+                    alert("You can't select the same ticket more than once.");
+                    return false;
                 }
-            });
 
-            return valid;
-        }
+                let valid = true;
+                document.querySelectorAll('.ticket-quantity').forEach(input => {
+                    const val = parseInt(input.value);
+                    if (val > 10) {
+                        alert("Maximum quantity per ticket is 10.");
+                        input.value = 10;
+                        valid = false;
+                    }
+                });
 
-        function updateTicketIndexes() {
-            document.querySelectorAll('.ticket-item').forEach((item, index) => {
-                const select = item.querySelector('.ticket-select');
-                const quantityInput = item.querySelector('.ticket-quantity');
-                const priceInput = item.querySelector('.ticket-price');
-
-                select.setAttribute('name', `tickets[${index}][ticket_id]`);
-                quantityInput.setAttribute('name', `tickets[${index}][quantity]`);
-                priceInput.setAttribute('name', `tickets[${index}][unit_price]`);
-            });
-        }
-
-        function removeTicket(button) {
-            const ticketItems = document.querySelectorAll('.ticket-item');
-
-            if (ticketItems.length <= 1) {
-                alert('You must have at least one ticket in the order.');
-                return;
+                return valid;
             }
 
-            if (confirm('Are you sure you want to remove this ticket?')) {
-                const ticketItem = button.closest('.ticket-item');
-                ticketItem.remove();
-                updateTicketIndexes();
-                updateTotal();
-            }
-        }
+            function updateTicketIndexes() {
+                document.querySelectorAll('.ticket-item').forEach((item, index) => {
+                    const select = item.querySelector('.ticket-select');
+                    const quantityInput = item.querySelector('.ticket-quantity');
+                    const priceInput = item.querySelector('.ticket-price');
 
-        document.querySelectorAll('.ticket-select').forEach(select => {
-            select.addEventListener('change', () => {
+                    select.setAttribute('name', `tickets[${index}][ticket_id]`);
+                    quantityInput.setAttribute('name', `tickets[${index}][quantity]`);
+                    priceInput.setAttribute('name', `tickets[${index}][unit_price]`);
+                });
+            }
+
+            function removeTicket(button) {
+                const ticketItems = document.querySelectorAll('.ticket-item');
+
+                if (ticketItems.length <= 1) {
+                    alert('You must have at least one ticket in the order.');
+                    return;
+                }
+
+                if (confirm('Are you sure you want to remove this ticket?')) {
+                    const ticketItem = button.closest('.ticket-item');
+                    ticketItem.remove();
+                    updateTicketIndexes();
+                    updateTotal();
+                }
+            }
+
+            document.querySelectorAll('.ticket-select').forEach(select => {
+                select.addEventListener('change', () => {
+                    setPriceFromSelect(select);
+                    validateAll();
+                });
                 setPriceFromSelect(select);
-                validateAll();
             });
-            setPriceFromSelect(select);
-        });
 
-        document.querySelectorAll('.ticket-quantity, .ticket-price').forEach(input => {
-            input.addEventListener('input', () => {
-                updateTotal();
+            document.querySelectorAll('.ticket-quantity, .ticket-price').forEach(input => {
+                input.addEventListener('input', () => {
+                    updateTotal();
+                });
             });
-        });
 
-        updateTotal();
-    });
-</script>
+            updateTotal();
+        });
+    </script>
 
 @endsection

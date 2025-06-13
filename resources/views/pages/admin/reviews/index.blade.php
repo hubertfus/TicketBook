@@ -109,7 +109,7 @@
                                 <div class="mt-4 pl-13">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="font-medium text-[#3A4454]">Event:</span>
-                                        <a href="{{ route('events.show', $review->event) }}"
+                                        <a href="{{ route('admin.events.show', $review->event) }}"
                                             class="text-[#6B4E71] hover:underline font-medium">
                                             {{ $review->event->title }}
                                         </a>

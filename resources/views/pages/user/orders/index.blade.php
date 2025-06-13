@@ -32,7 +32,7 @@
         </div>
 
         <div class="searchbar-container">
-            <x-searchbar :filters="$filters" :action="route('orders.index')" />
+            <x-searchbar :filters="$filters" :action="route('user.orders.index')" />
         </div>
 
         <div class="overflow-x-auto w-full">
@@ -53,7 +53,7 @@
                             <td class="px-4 py-2">{{ $order->created_at->format('Y-m-d H:i') }}</td>
                             <td class="px-4 py-2">
                                 <div class="flex flex-col space-y-1">
-                                    <a href="{{ route('orders.show', $order) }}"
+                                    <a href="{{ route('user.orders.show', $order) }}"
                                         class="text-blue-600 hover:underline text-sm">Details</a>
 
                                     @php
@@ -93,7 +93,7 @@
                                         @endif
                                     @else
                                         {{-- Można anulować --}}
-                                        <form action="{{ route('orders.cancel', $order) }}" method="POST"
+                                        <form action="{{ route('user.orders.cancel', $order) }}" method="POST"
                                             onsubmit="return confirm('Are you sure you want to cancel this order?');">
                                             @csrf
                                             <button type="submit" class="text-red-600 hover:underline text-sm">

@@ -43,13 +43,14 @@
                         class="hidden overflow-hidden absolute right-0 mt-2 w-64 bg-[#FFEBFA] border border-[#D7C1D3] rounded-xl shadow-xl z-50 text-base">
                         <a href="{{ route('user.orders.index') }}"
                             class="block px-5 py-3 text-black hover:bg-[#D7C1D3]">Transactions / Tickets</a>
-                        <a href="{{ route('profile.edit') }}"
+                        <a href="{{ route('user.profile.edit') }}"
                             class="block px-5 py-3 text-black hover:bg-[#D7C1D3]">Account</a>
-                        <a href="{{ route('topup.index') }}" class="block px-5 py-3 text-black hover:bg-[#D7C1D3]">My
+                        <a href="{{ route('user.topup.index') }}"
+                            class="block px-5 py-3 text-black hover:bg-[#D7C1D3]">My
                             Top-Up Codes</a>
                         <a href="{{ route('logout') }}" class="block px-5 py-3 text-black hover:bg-[#D7C1D3]">Log
                             Out</a>
-                        <a href="{{ route('profile.destroy') }}"
+                        <a href="{{ route('user.profile.destroy') }}"
                             class="block px-5 py-3 text-red-600 hover:bg-[#D7C1D3]">Delete Account</a>
                     </div>
                 </div>

@@ -12,7 +12,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('topup.redeem') }}">
+        <form method="POST" action="{{ route('user.topup.redeem') }}">
             @csrf
 
             <label class="block text-sm font-medium text-[#3A4454] mb-2">Enter Code</label>

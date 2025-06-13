@@ -97,7 +97,7 @@
             </table>
         </div>
         <div class="text-right mt-6">
-            <a href="{{ route('orders.confirmation', $order) }}"
+            <a href="{{ route('user.orders.confirmation', $order) }}"
                 class="inline-block px-4 py-2 bg-[#6B4E71] text-white rounded hover:bg-[#53687E] transition">
                 Download Confirmation (PDF)
             </a>
