@@ -39,6 +39,40 @@ class UserController extends Controller
         return view('pages.admin.users.index', compact('users', 'roles'));
     }
 
+    public function create()
+    {
+        if (!Auth::user()?->isAdmin()) {
+            abort(403);
+        }
+
+        return view('pages.admin.users.create');
+    }
+
+public function store(Request $request)
+{
+    if (!Auth::user()?->isAdmin()) {
+        abort(403);
+    }
+
+    $validated = $request->validate([
+        'name' => 'required|string|max:255|min:5',
+        'email' => 'required|email|unique:users',
+        'password' => 'required|string|min:6',
+        'role' => 'required|in:admin,user',
+        'balance' => 'nullable|numeric|min:0'
+    ]);
+
+    $user = User::create([
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'password' => Hash::make($validated['password']),
+        'role' => $validated['role'],
+        'balance' => $validated['balance'] ?? 0
+    ]);
+
+    return redirect()->route('users.index')->with('success', 'User created successfully!');
+}
+
     public function show(User $user)
     {
         if (!Auth::user()?->isAdmin()) {
@@ -71,7 +105,9 @@ class UserController extends Controller
                 Rule::unique('users')->ignore($user->id),
             ],
             'password' => 'nullable|string|min:6',
-            'role' => 'required|in:admin,user'
+            'role' => 'required|in:admin,user',
+            'balance' => 'nullable|numeric|min:0'
+
         ]);
 
         if (!empty($validated['password'])) {
@@ -83,6 +119,7 @@ class UserController extends Controller
         $user->update($validated);
 
         return redirect()->route('admin.users.index')->with('success', 'User updated!');
+
     }
     public function destroy(User $user)
     {
