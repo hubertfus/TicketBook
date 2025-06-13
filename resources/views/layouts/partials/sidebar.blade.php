@@ -1,10 +1,10 @@
 @php
     $navItems = [
         ['name' => 'Dashboard', 'route' => 'admin.dashboard', 'icon' => 'heroicon-o-home'],
-        ['name' => 'Transactions', 'route' => 'orders.index', 'icon' => 'heroicon-m-arrows-right-left'],
-        ['name' => 'Refunds', 'route' => 'refunds.index', 'icon' => 'heroicon-o-receipt-refund'],
-        ['name' => 'Users', 'route' => 'users.index', 'icon' => 'heroicon-o-users'],
-        ['name' => 'Events', 'route' => 'events.index', 'icon' => 'heroicon-o-calendar-days'],
+        ['name' => 'Transactions', 'route' => 'admin.orders.index', 'icon' => 'heroicon-m-arrows-right-left'],
+        ['name' => 'Refunds', 'route' => 'admin.refunds.index', 'icon' => 'heroicon-o-receipt-refund'],
+        ['name' => 'Users', 'route' => 'admin.users.index', 'icon' => 'heroicon-o-users'],
+        ['name' => 'Events', 'route' => 'admin.events.index', 'icon' => 'heroicon-o-calendar-days'],
         ['name' => 'Reviews', 'route' => 'admin.reviews.index', 'icon' => 'heroicon-o-chat-bubble-bottom-center-text'],
         ['name' => 'Top-Up Generator', 'route' => 'admin.topup.create', 'icon' => 'heroicon-o-currency-dollar'],
     ];
@@ -35,6 +35,14 @@
                     </a>
                 </li>
             @endforeach
+
+            {{-- Logout --}}
+            <li class="flex flex-row gap-1 cursor-pointer hover:bg-[#D7C1D3] py-3 px-2 rounded-sm">
+                <a href="{{ route('logout') }}" class="flex flex-row gap-2 items-center w-full">
+                    @svg('heroicon-o-arrow-left-on-rectangle', 'h-5 w-5 flex-shrink-0')
+                    <div class="hidden lg:flex">Logout</div>
+                </a>
+            </li>
         </ul>
     </div>
 </div>

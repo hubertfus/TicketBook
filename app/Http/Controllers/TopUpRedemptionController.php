@@ -44,7 +44,7 @@ class TopUpRedemptionController extends Controller
         $code->used_by = $user->id;
         $code->save();
 
-        return redirect()->route('topup.form')->with('success', 'Top-up successful! Your account has been credited.');
+        return redirect()->route('user.topup.form')->with('success', 'Top-up successful! Your account has been credited.');
     }
     public function redeemDirect($code)
     {

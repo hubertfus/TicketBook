@@ -51,14 +51,14 @@
             @endif
 
             <div class="flex gap-6">
-                <form method="POST" action="{{ route('payment.pay', $event) }}" class="flex-1">
+                <form method="POST" action="{{ route('user.payment.pay', $event) }}" class="flex-1">
                     @csrf
                     <button type="submit"
                         class="w-full py-3 rounded-xl bg-[#6B4E71] hover:bg-[#593b5c] text-white font-semibold transition">
                         Confirm Payment
                     </button>
                 </form>
-                <a href="{{ route('events.show', $event) }}"
+                <a href="{{ route('user.events.show', $event) }}"
                     class="flex-1 text-center border border-[#6B4E71] text-[#6B4E71] font-semibold py-2 rounded-xl hover:bg-[#6B4E71] hover:text-white transition">
                     Cancel
                 </a>

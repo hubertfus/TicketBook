@@ -104,7 +104,7 @@ class OrderController extends Controller
         }
         $order->updateTotalPrice();
 
-        return redirect()->route('orders.index')->with('success', 'Order created successfully!');
+        return redirect()->route('admin.orders.index')->with('success', 'Order created successfully!');
     }
 
     public function edit(Order $order)

@@ -11,7 +11,7 @@
                 <p class="text-sm">Your Current Balance:</p>
                 <p class="text-2xl font-bold">${{ number_format(auth()->user()->balance, 2) }}</p>
             </div>
-            <a href="{{ route('topup.form') }}"
+            <a href="{{ route('user.topup.form') }}"
                 class="inline-block bg-[#6B4E71] hover:bg-[#593b5c] text-white font-semibold py-2 px-4 rounded-xl transition">
                 Redeem a Code
             </a>
@@ -43,7 +43,7 @@
                             </td>
                             <td class="py-2">
                                 @if (!$code->is_used)
-                                    <form method="POST" action="{{ route('topup.redeemDirect', $code->code) }}">
+                                    <form method="POST" action="{{ route('user.topup.redeemDirect', $code->code) }}">
                                         @csrf
                                         <button type="submit"
                                             class="bg-[#6B4E71] hover:bg-[#593b5c] text-white font-bold py-1 px-4 rounded-xl text-sm">

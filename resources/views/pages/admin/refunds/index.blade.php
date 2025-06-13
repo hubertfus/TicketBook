@@ -41,7 +41,7 @@
 
     {{-- Filters --}}
     <div class="max-w-7xl mx-auto p-4">
-        <x-searchbar :filters="$filters" :action="route('refunds.index')" />
+        <x-searchbar :filters="$filters" :action="route('admin.refunds.index')" />
     </div>
 
     {{-- Refunds Table --}}
@@ -61,19 +61,23 @@
                 @forelse ($refunds as $refund)
                     <tr>
                         <td class="px-4 py-2">#{{ $refund->order->id }}</td>
-                        <td class="px-4 py-2">{{ $refund->order->user->name ?? '–' }} ({{ $refund->order->user->email ?? '–' }})</td>
+                        <td class="px-4 py-2">{{ $refund->order->user->name ?? '–' }}
+                            ({{ $refund->order->user->email ?? '–' }})
+                        </td>
                         <td class="px-4 py-2">PLN {{ number_format($refund->order->total_price, 2, ',', ' ') }}</td>
                         <td class="px-4 py-2">{{ $refund->reason }}</td>
                         <td class="px-4 py-2 capitalize">{{ $refund->status }}</td>
                         <td class="px-4 py-2 space-x-2">
                             @if ($refund->status === 'pending')
-                                <form action="{{ route('refunds.approve', $refund) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.refunds.approve', $refund) }}" method="POST" class="inline">
                                     @csrf
-                                    <button class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">Approve</button>
+                                    <button
+                                        class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">Approve</button>
                                 </form>
-                                <form action="{{ route('refunds.reject', $refund) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.refunds.reject', $refund) }}" method="POST" class="inline">
                                     @csrf
-                                    <button class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Reject</button>
+                                    <button
+                                        class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Reject</button>
                                 </form>
                             @else
                                 <span class="text-gray-500 text-sm">No actions</span>

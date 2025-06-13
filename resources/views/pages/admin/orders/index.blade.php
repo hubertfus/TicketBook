@@ -33,17 +33,17 @@
 
 @section('content')
     <div class="px-6 py-6 mt-4">
-    <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold">Transactions</h1>
-        <a href="{{ route('orders.create') }}" class="bg-[#6B4E71] text-white px-4 py-2 rounded hover:bg-[#48354D]">
-            Add Order
-        </a>
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Transactions</h1>
+            <a href="{{ route('admin.orders.create') }}" class="bg-[#6B4E71] text-white px-4 py-2 rounded hover:bg-[#48354D]">
+                Add Order
+            </a>
+        </div>
     </div>
-</div>
 
     {{-- Filters --}}
     <div class="max-w-7xl mx-auto p-4">
-        <x-searchbar :filters="$filters" :action="route('orders.index')" />
+        <x-searchbar :filters="$filters" :action="route('admin.orders.index')" />
     </div>
 
     {{-- Orders Table --}}
@@ -69,8 +69,10 @@
                         <td class="px-4 py-2">{{ $order->created_at->format('Y-m-d H:i') }}</td>
                         <td class="px-4 py-2">
                             <div class="flex items-center space-x-2">
-                                <a href="{{ route('orders.edit', $order) }}" class="text-blue-600 hover:underline text-sm">Edit</a>
-                                <form action="{{ route('orders.destroy', $order) }}" method="POST" onsubmit="return confirm('Delete this order?')">
+                                <a href="{{ route('admin.orders.edit', $order) }}"
+                                    class="text-blue-600 hover:underline text-sm">Edit</a>
+                                <form action="{{ route('admin.orders.destroy', $order) }}" method="POST"
+                                    onsubmit="return confirm('Delete this order?')">
                                     @csrf
                                     @method('DELETE')
                                     <button class="text-red-600 hover:underline text-sm">Delete</button>

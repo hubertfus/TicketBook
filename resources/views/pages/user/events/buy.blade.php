@@ -21,7 +21,7 @@
                     <h1 class="text-3xl font-bold text-white">{{ $event->title }}</h1>
                 </div>
             </div>
-            <form method="POST" action="{{ route('tickets.store', $event) }}" class="p-8 space-y-6">
+            <form method="POST" action="{{ route('tickets.buy', $event) }}" class="p-8 space-y-6">
                 @if ($errors->has('quantities'))
                     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                         {{ $errors->first('quantities') }}
@@ -76,7 +76,7 @@
                         <div class="flex items-center gap-3 min-w-[120px]">
                             @svg('heroicon-o-ticket', 'h-5 w-5 text-[#6B4E71]')
                             <span class="font-medium text-[#3A4454] capitalize">{{ $ticket->category }}</span>
-                            <span class="text-[#3A4454] font-medium">${{ number_format($ticket->price, 2) }}</span>
+                            <span class="text-[#3A4454] font-medium">{{ number_format($ticket->price, 2) }} PLN</span>
                         </div>
                         <input type="number" name="quantities[{{ $ticket->id }}]" min="0"
                             max="{{ $available }}" data-price="{{ $ticket->price }}"
@@ -86,7 +86,7 @@
                 @endforeach
                 <div class="flex justify-end text-[#3A4454] font-semibold text-lg pt-4">
                     <span>Total: </span>
-                    <span id="total-price" class="ml-2">$0.00</span>
+                    <span id="total-price" class="ml-2">0.00 PLN</span>
                 </div>
 
                 <div class="flex flex-col items-center gap-4 pt-6">
@@ -117,7 +117,7 @@
                         const price = parseFloat(input.dataset.price);
                         total += quantity * price;
                     });
-                    totalDisplay.textContent = '$' + total.toFixed(2);
+                    totalDisplay.textContent = total.toFixed(2) + ' PLN';
                 }
 
                 inputs.forEach(input => {

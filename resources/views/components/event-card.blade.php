@@ -59,7 +59,7 @@
         <div class="flex flex-1 pt-4">
             @if (auth()->check() && auth()->user()->role === 'admin')
                 <div class="flex flex-1 space-x-4">
-                    <form action="{{ route('events.destroy', $event) }}" method="POST"
+                    <form action="{{ route('admin.events.destroy', $event) }}" method="POST"
                         onsubmit="return confirm('Are you sure you want to delete this event?');" class="flex flex-1">
                         @csrf
                         @method('DELETE')
@@ -69,10 +69,10 @@
                         </button>
                     </form>
 
-                    <a href="{{ route('events.edit', $event) }}"
+                    <a href="{{ route('admin.events.edit', $event) }}"
                         class="flex-1 flex justify-center items-center bg-[#FFEBFA] border border-[#6B4E71] text-[#6B4E71] font-semibold py-2 rounded-xl hover:bg-[#6B4E71] hover:text-white transition">Edit</a>
 
-                    <a href="{{ route('tickets.byEvent', $event->id) }}"
+                    <a href="{{ route('admin.tickets.byEvent', $event->id) }}"
                         class="flex-1 block text-center bg-[#D7C1D3] text-[#3A4454] font-semibold py-2 rounded-xl hover:bg-[#b399ad] transition">
                         Manage tickets
                     </a>

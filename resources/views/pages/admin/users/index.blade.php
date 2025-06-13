@@ -33,7 +33,7 @@
     <div class="w-full relative z-20">
         <div class="max-w-7xl mx-auto p-4 sm:p-5">
             <div class="w-full relative z-20">
-                <x-searchbar :filters="$filters" :action="route('users.index')" />
+                <x-searchbar :filters="$filters" :action="route('admin.users.index')" />
             </div>
         </div>
     </div>
