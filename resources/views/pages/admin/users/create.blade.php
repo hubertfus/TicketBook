@@ -10,7 +10,7 @@
                 @svg('heroicon-o-user-plus', 'w-6 h-6 text-[#6B4E71]') Create New User
             </h2>
 
-            <form action="{{ route('users.store') }}" method="POST" class="space-y-6">
+            <form action="{{ route('admin.users.store') }}" method="POST" class="space-y-6">
                 @csrf
 
                 @if ($errors->any())
@@ -73,7 +73,7 @@
 
                 {{-- Actions --}}
                 <div class="pt-6 border-t border-[#6B4E71]/20 flex justify-end gap-4">
-                    <a href="{{ route('users.index') }}"
+                    <a href="{{ route('admin.users.index') }}"
                         class="px-6 py-3 rounded-xl bg-transparent border border-[#6B4E71] text-[#6B4E71] hover:bg-[#6B4E71] hover:text-white transition">
                         Cancel
                     </a>

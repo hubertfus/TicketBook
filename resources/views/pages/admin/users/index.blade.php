@@ -28,7 +28,7 @@
 @section('content')
     <div class="flex flex-1 justify-between items-center bg-[#FFEBFA] p-4">
         <h1 class="text-2xl font-bold">Users</h1>
-        <a href="{{ route('users.create') }}" class="bg-[#6B4E71] text-white px-4 py-2 rounded">Add User</a>
+        <a href="{{ route('admin.users.create') }}" class="bg-[#6B4E71] text-white px-4 py-2 rounded">Add User</a>
     </div>
 
     <div class="w-full relative z-20">
