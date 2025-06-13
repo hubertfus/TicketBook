@@ -9,7 +9,7 @@
         <div class="mb-6 p-4 bg-white border border-[#D7C1D3] rounded-xl flex items-center justify-between shadow-sm">
             <div class="text-[#3A4454]">
                 <p class="text-sm">Your Current Balance:</p>
-                <p class="text-2xl font-bold">${{ number_format(auth()->user()->balance, 2) }}</p>
+                <p class="text-2xl font-bold">{{ number_format(auth()->user()->balance, 2) }} PLN</p>
             </div>
             <a href="{{ route('user.topup.form') }}"
                 class="inline-block bg-[#6B4E71] hover:bg-[#593b5c] text-white font-semibold py-2 px-4 rounded-xl transition">
