@@ -124,3 +124,9 @@ Route::post('/events/{event}/add-review', [UserReviewController::class, 'store']
 Route::delete('/reviews/{review}', [UserReviewController::class, 'destroy'])->name('reviews.destroy');
 Route::get('/events/{event}/buy', [TicketPurchaseController::class, 'create'])->name('tickets.buy');
 Route::post('/events/{event}/buy', [TicketPurchaseController::class, 'store'])->name('tickets.purchase');
+
+
+Route::prefix('events')->name('user.events.')->group(function () {
+    Route::get('/', [UserEventController::class, 'index'])->name('index');
+    Route::get('/{event}', [UserEventController::class, 'show'])->name('show');
+});
