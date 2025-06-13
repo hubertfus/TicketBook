@@ -36,6 +36,22 @@
         <a href="{{ route('admin.events.create') }}" class="bg-[#6B4E71] text-white px-4 py-2 rounded">Add Event</a>
     </div>
 
+    @if ($errors->any())
+        <div class="bg-red-100 text-red-600 p-4 mb-4 rounded shadow-inner">
+            <ul class="list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="bg-green-100 text-green-700 p-4 mb-4 rounded shadow-inner">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="w-full relative z-20">
         <div class="flex flex-col flex-1 gap-6 max-w-7xl mx-auto  p-4 sm:p-5">
             <div class="w-full relative z-20">
