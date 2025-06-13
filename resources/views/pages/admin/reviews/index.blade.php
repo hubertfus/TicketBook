@@ -27,14 +27,12 @@
 @endphp
 
 @section('content')
+    <div class="flex flex-1 justify-between items-center bg-[#FFEBFA] p-4">
+        <h1 class="text-2xl font-bold">Reviews</h1>
+        <a href="{{ route('admin.reviews.create') }}" class="bg-[#6B4E71] text-white px-4 py-2 rounded">Add Review</a>
+    </div>
     <div class="min-h-screen bg-[#FFF7FD] py-6 px-4">
         <div class="max-w-7xl mx-auto">
-            <div class="bg-[#FFEBFA] rounded-2xl shadow-lg p-6 mb-6">
-                <h1 class="text-3xl font-extrabold text-[#3A4454] flex items-center gap-2">
-                    @svg('heroicon-o-chat-bubble-bottom-center-text', 'w-8 h-8 text-[#6B4E71]')
-                    Reviews
-                </h1>
-            </div>
 
             <div class="mb-6">
                 <x-searchbar :filters="$filters" :action="route('admin.reviews.index')" />

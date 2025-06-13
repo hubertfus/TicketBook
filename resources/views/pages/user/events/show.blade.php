@@ -162,7 +162,7 @@
                     @if ($reviews->count() > 0)
                         <div class="space-y-6">
                             @foreach ($reviews as $review)
-                                <div class="bg-white p-6 rounded-2xl shadow-inner">
+                                <div class="bg-white p-6 rounded-2xl shadow-inner relative">
                                     <div class="flex items-center justify-between mb-2">
                                         <div class="flex items-center gap-4">
                                             <div
@@ -176,24 +176,48 @@
                                                     {{ $review->created_at->format('d.m.Y') }}</p>
                                             </div>
                                         </div>
-                                        <div class="flex items-center gap-1 text-yellow-400">
-                                            @for ($i = 1; $i <= 5; $i++)
-                                                @if ($i <= $review->rating)
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current"
-                                                        viewBox="0 0 20 20" fill="currentColor">
-                                                        <path
-                                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.167c.969 0 1.371 1.24.588 1.81l-3.374 2.455a1 1 0 00-.364 1.118l1.287 3.955c.3.921-.755 1.688-1.538 1.118l-3.374-2.455a1 1 0 00-1.175 0l-3.374 2.455c-.783.57-1.838-.197-1.538-1.118l1.287-3.955a1 1 0 00-.364-1.118L2.068 9.382c-.783-.57-.38-1.81.588-1.81h4.167a1 1 0 00.95-.69l1.286-3.955z" />
-                                                    </svg>
-                                                @else
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-gray-300"
-                                                        viewBox="0 0 20 20" fill="currentColor">
-                                                        <path
-                                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.167c.969 0 1.371 1.24.588 1.81l-3.374 2.455a1 1 0 00-.364 1.118l1.287 3.955c.3.921-.755 1.688-1.538 1.118l-3.374-2.455a1 1 0 00-1.175 0l-3.374 2.455c-.783.57-1.838-.197-1.538-1.118l1.287-3.955a1 1 0 00-.364-1.118L2.068 9.382c-.783-.57-.38-1.81.588-1.81h4.167a1 1 0 00.95-.69l1.286-3.955z" />
-                                                    </svg>
+                                        <div class="flex items-center gap-4">
+                                            @auth
+                                                @if (auth()->id() == $review->user_id)
+                                                    <form action="{{ route('reviews.destroy', $review) }}" method="POST"
+                                                        class="flex items-center">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="text-red-500 hover:text-red-700 transition-colors flex items-center gap-1 text-sm"
+                                                            onclick="return confirm('Are you sure you want to delete your review?')">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                                viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                                    clip-rule="evenodd" />
+                                                            </svg>
+                                                            <span>Delete</span>
+                                                        </button>
+                                                    </form>
                                                 @endif
-                                            @endfor
+                                            @endauth
+                                            <div class="flex items-center gap-1 text-yellow-400">
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    @if ($i <= $review->rating)
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current"
+                                                            viewBox="0 0 20 20" fill="currentColor">
+                                                            <path
+                                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.167c.969 0 1.371 1.24.588 1.81l-3.374 2.455a1 1 0 00-.364 1.118l1.287 3.955c.3.921-.755 1.688-1.538 1.118l-3.374-2.455a1 1 0 00-1.175 0l-3.374 2.455c-.783.57-1.838-.197-1.538-1.118l1.287-3.955a1 1 0 00-.364-1.118L2.068 9.382c-.783-.57-.38-1.81.588-1.81h4.167a1 1 0 00.95-.69l1.286-3.955z" />
+                                                        </svg>
+                                                    @else
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            class="h-5 w-5 fill-gray-300" viewBox="0 0 20 20"
+                                                            fill="currentColor">
+                                                            <path
+                                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.167c.969 0 1.371 1.24.588 1.81l-3.374 2.455a1 1 0 00-.364 1.118l1.287 3.955c.3.921-.755 1.688-1.538 1.118l-3.374-2.455a1 1 0 00-1.175 0l-3.374 2.455c-.783.57-1.838-.197-1.538-1.118l1.287-3.955a1 1 0 00-.364-1.118L2.068 9.382c-.783-.57-.38-1.81.588-1.81h4.167a1 1 0 00.95-.69l1.286-3.955z" />
+                                                        </svg>
+                                                    @endif
+                                                @endfor
+                                            </div>
                                         </div>
                                     </div>
+
                                     @if ($review->comment)
                                         <p class="text-[#3A4454]">{{ $review->comment }}</p>
                                     @endif

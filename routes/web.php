@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TicketPurchaseController;
 use App\Http\Controllers\TopUpRedemptionController;
 use App\Http\Controllers\User\PaymentController;
@@ -18,6 +17,8 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\OrderItemController as AdminOrderItemController;
 use App\Http\Controllers\Admin\RefundController as AdminRefundController;
+use App\Http\Controllers\User\ReviewController as UserReviewController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\AdminTopUpController;
 use App\Http\Controllers\Admin\TicketController as AdminTicketController;
 
@@ -99,7 +100,7 @@ Route::middleware(['auth', 'check.roles:admin'])->prefix('admin')->name('admin.'
     Route::post('refunds/{refund}/reject', [AdminRefundController::class, 'reject'])->name('refunds.reject');
 
     // Reviews
-    Route::resource('reviews', ReviewController::class)->names([
+    Route::resource('reviews', AdminReviewController::class)->names([
         'index' => 'reviews.index',
         'show' => 'reviews.show',
         'edit' => 'reviews.edit',
@@ -119,6 +120,7 @@ Route::middleware(['auth', 'check.roles:admin'])->prefix('admin')->name('admin.'
 });
 
 // Public routes (no auth)
-Route::post('/events/{event}/add-review', [ReviewController::class, 'store'])->name('reviews.store');
+Route::post('/events/{event}/add-review', [UserReviewController::class, 'store'])->name('reviews.store');
+Route::delete('/reviews/{review}', [UserReviewController::class, 'destroy'])->name('reviews.destroy');
 Route::get('/events/{event}/buy', [TicketPurchaseController::class, 'create'])->name('tickets.buy');
 Route::post('/events/{event}/buy', [TicketPurchaseController::class, 'store'])->name('tickets.purchase');
