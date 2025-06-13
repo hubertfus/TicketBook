@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Refund;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
@@ -51,74 +52,80 @@ class OrderController extends Controller
 
     public function cancel(Request $request, Order $order)
     {
-        $user = auth()->user();
-
-        if ($order->user_id !== $user->id) {
-            return back()->with('error', 'You are not authorized to cancel this order.');
-        }
-
-        if (!in_array($order->status, ['paid', 'pending'])) {
-            return back()->with('error', 'This order cannot be cancelled. Current status: ' . $order->status);
-        }
-
-        $order->load('orderItems.ticket.event');
-
-        $event = $order->orderItems->first()->ticket->event ?? null;
-
-        if (!$event) {
-            return back()->with('error', 'Event not found for this order.');
-        }
-
-        $now = now();
-        $eventDate = $event->date->startOfDay();
-
-        $daysUntilEvent = $now->diffInDays($eventDate, false);
-
-        if ($daysUntilEvent >= 14) {
-            $refundRate = 1.0;
-        } elseif ($daysUntilEvent >= 7) {
-            $refundRate = 0.8;
-        } elseif ($daysUntilEvent >= 2) {
-            $refundRate = 0.6;
-        } elseif ($daysUntilEvent >= 0) {
-            $refundRate = 0.5;
-        } else {
-            return back()->with('error', 'You can no longer cancel this order.');
-        }
-
-        $refundAmount = round($order->total_price * $refundRate, 2);
-
         try {
+            $user = auth()->user();
+
+            if ($order->user_id !== $user->id) {
+                throw new \Exception('You are not authorized to cancel this order');
+            }
+
+            if (!in_array($order->status, ['paid', 'pending'])) {
+                throw new \Exception('Cannot cancel order with status: '.$order->status);
+            }
+
+            $order->load(['orderItems.ticket.event', 'user']);
+            $event = $order->orderItems->first()->ticket->event ?? null;
+
+            if (!$event) {
+                throw new \Exception('Associated event not found');
+            }
+
+            $eventDate = Carbon::parse($event->date)->setTimezone(config('app.timezone'))->startOfDay();
+            $currentDate = Carbon::now()->setTimezone(config('app.timezone'))->startOfDay();
+            $daysUntilEvent = $currentDate->diffInDays($eventDate, false);
+
+
+            Log::debug('Cancellation details', [
+                'order_id' => $order->id,
+                'event_date' => $eventDate,
+                'current_date' => $currentDate,
+                'days_until_event' => $daysUntilEvent,
+                'timezone' => config('app.timezone')
+            ]);
+
+            if ($daysUntilEvent < 0) {
+                throw new \Exception('Event has already ended');
+            }
+
+            $refundRate = $this->calculateRefundRate($daysUntilEvent);
+            $refundAmount = round($order->total_price * $refundRate, 2);
+
             DB::transaction(function () use ($order, $user, $refundAmount, $event) {
 
-                $user->balance += $refundAmount;
-                $user->save();
+                $order->update(['status' => 'cancelled']);
 
-                $order->status = 'cancelled';
-                $order->save();
+                $user->increment('balance', $refundAmount);
 
-                foreach ($order->orderItems as $orderItem) {
-                    $ticket = $orderItem->ticket;
-                    $quantity = $orderItem->quantity;
-
-                    $ticket->quantity += $quantity;
-                    $ticket->save();
-
-                    if (isset($event->ticketSold)) {
-                        $event->ticketSold -= $quantity;
+                foreach ($order->orderItems as $item) {
+                    if ($event->ticketSold >= $item->quantity) {
+                        $event->decrement('ticketSold', $item->quantity);
                     }
-                }
-
-                if (isset($event->ticketSold)) {
-                    $event->save();
                 }
             });
 
-            return redirect()->route('user.orders.index')->with('success', "Order cancelled successfully. Refund: PLN " . number_format($refundAmount, 2, ',', ' '));
+            return redirect()->route('user.orders.index')
+                   ->with('success', "Order cancelled. Refunded: ".number_format($refundAmount, 2)." PLN (".($refundRate*100)."%)")
+                   ->with('debug_info', "Days until event: $daysUntilEvent");
+
         } catch (\Exception $e) {
-            Log::error('Order cancellation failed: ' . $e->getMessage());
-            return back()->with('error', 'Failed to cancel order. Please try again.');
+            Log::error('Order cancellation failed: '.$e->getMessage());
+            return back()->with('error', 'Cancellation failed: '.$e->getMessage());
         }
+    }
+
+    private function calculateRefundRate($daysUntilEvent)
+    {
+
+        $daysUntilEvent = max(0, $daysUntilEvent);
+
+        return match(true) {
+            $daysUntilEvent >= 15 => 1.0,
+            $daysUntilEvent >= 8 => 0.8,
+            $daysUntilEvent >= 3 => 0.6,
+            $daysUntilEvent >= 1 => 0.5,
+            $daysUntilEvent == 0 => 0.3,
+            default => 0.0
+        };
     }
 
     public function refund(Request $request, Order $order)
@@ -149,12 +156,14 @@ class OrderController extends Controller
                 $order->save();
             });
 
-            return redirect()->route('orders.index')->with('success', "Order refunded successfully. Amount: PLN " . number_format($order->total_price, 2, ',', ' '));
+            return redirect()->route('user.orders.index')->with('success',
+                "Order refunded successfully. Amount: PLN " . number_format($order->total_price, 2, ',', ' '));
         } catch (\Exception $e) {
             Log::error('Order refund failed: ' . $e->getMessage());
             return back()->with('error', 'Failed to process refund. Please try again.');
         }
     }
+
     public function submitRefundRequest(Request $request, Order $order)
     {
         $user = auth()->user();
@@ -186,6 +195,7 @@ class OrderController extends Controller
 
         return back()->with('success', 'Your refund request has been sent.');
     }
+
     public function downloadConfirmation(Order $order)
     {
         if (auth()->id() !== $order->user_id) {
