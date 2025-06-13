@@ -32,6 +32,7 @@
                         <div class="pt-4 border-t border-[#6B4E71]/20">
                             <h4 class="font-semibold text-[#3A4454] mb-2">Event</h4>
                             <a href="{{ route('admin.events.show', $review->event) }}"
+
                                class="text-[#6B4E71] hover:underline font-medium">
                                 {{ $review->event->title }}
                             </a>
