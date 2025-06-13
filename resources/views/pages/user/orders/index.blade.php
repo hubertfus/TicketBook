@@ -65,7 +65,7 @@
                             $event = optional($order->orderItems->first()->ticket->event);
                             $eventDate = $event->date ?? null;
                             $canCancel = in_array($order->status, ['paid', 'pending']) && $eventDate && $eventDate->isFuture();
-                            $canRequestRefund = $order->status === 'cancelled' && !$order->refund && $eventDate && $eventDate->isPast();
+                            $canRequestRefund = $order->status === 'paid' && !$order->refund && $eventDate && $eventDate->isPast();
                         @endphp
                         <tr>
                             <td class="px-4 py-2">#{{ $order->id }}</td>
@@ -81,7 +81,7 @@
                             <td class="px-4 py-2">{{ number_format($order->total_price, 2, ',', ' ') }} PLN</td>
                             <td class="px-4 py-2">
                                 @if($eventDate)
-                                    {{ $eventDate->format('Y-m-d H:i') }}
+                                    {{ $event->time }}
                                     @if($eventDate->isPast())
                                         <span class="text-xs text-gray-500">(ended)</span>
                                     @else
