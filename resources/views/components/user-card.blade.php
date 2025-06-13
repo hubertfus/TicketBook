@@ -21,6 +21,10 @@
                 @svg('heroicon-o-envelope', 'h-4 w-4 flex-shrink-0')
                 <p class="truncate" title="{{ $user->email }}">{{ $user->email }}</p>
             </div>
+            <div class="flex items-center gap-2 text-sm text-[#3A4454] mt-2">
+                @svg('heroicon-o-currency-dollar', 'h-4 w-4 flex-shrink-0 text-[#6B4E71]')
+                <span class="font-mono">{{ number_format($user->balance, 2) }}</span>
+            </div>
         </div>
     </div>
 
