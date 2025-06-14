@@ -33,7 +33,8 @@ class ReviewController extends Controller
         }
 
         if ($request->filled('event')) {
-            $query->where('event_id', $request->input('event'));
+            $eventId = Event::where('title', $request->input('event'))->value('id');
+            $query->where('event_id', $eventId);
         }
 
         $reviews = $query->paginate(10);
