@@ -3,7 +3,7 @@
 
 @section('content')
     {{-- Main Container --}}
-    <div class="max-w-8xl mx-auto p-4 space-y-6">
+    <div class="max-w-7xl mx-auto p-4 space-y-6">
         {{-- Centered Title with Back Link --}}
         <div class="text-center py-6 relative">
             <h1 class="text-2xl font-bold">Order Details</h1>
@@ -16,11 +16,7 @@
         {{-- Order Summary --}}
         <div class="bg-[#FFF7FD] shadow rounded-lg p-6">
             <h2 class="text-lg font-semibold mb-4">Order Summary</h2>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                    <label class="text-sm font-medium text-gray-600">Order ID</label>
-                    <p class="mt-1 text-sm text-gray-900">#{{ $order->id }}</p>
-                </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="text-sm font-medium text-gray-600">Status</label>
                     <p class="mt-1">
@@ -52,11 +48,11 @@
             <table class="w-full bg-[#FFF7FD] shadow rounded-lg overflow-hidden">
                 <thead class="bg-[#FFEBFA] text-gray-700 text-sm font-semibold">
                     <tr>
-                        <th class="px-4 py-2 text-left">Event</th>
-                        <th class="px-4 py-2 text-left">Ticket Category</th>
-                        <th class="px-4 py-2 text-center">Quantity</th>
-                        <th class="px-4 py-2 text-right">Unit Price</th>
-                        <th class="px-4 py-2 text-right">Total Price</th>
+                        <th class="px-4 py-2 text-left w-2/5">Event</th>
+                        <th class="px-4 py-2 text-left w-1/5">Ticket Category</th>
+                        <th class="px-4 py-2 text-center w-1/10">Quantity</th>
+                        <th class="px-4 py-2 text-right w-1/5">Unit Price</th>
+                        <th class="px-4 py-2 text-right w-1/5">Total Price</th>
                     </tr>
                 </thead>
                 <tbody class="text-sm text-gray-800 divide-y divide-gray-200">
@@ -89,8 +85,8 @@
                 </tbody>
                 <tfoot class="bg-[#FFEBFA]">
                     <tr>
-                        <td colspan="4" class="px-4 py-2 text-right font-semibold">Total Order Amount:</td>
-                        <td class="px-4 py-2 text-right font-bold text-lg">
+                        <td colspan="3" class="px-4 py-2 text-right font-semibold">Total Order Amount:</td>
+                        <td colspan="2" class="px-4 py-2 text-right font-bold text-lg">
                             {{ number_format($order->total_price, 2, ',', ' ') }} PLN</td>
                     </tr>
                 </tfoot>
@@ -102,6 +98,5 @@
                 Download Confirmation (PDF)
             </a>
         </div>
-
     </div>
 @endsection

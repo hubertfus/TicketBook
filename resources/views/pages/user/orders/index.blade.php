@@ -8,12 +8,14 @@
             'type' => 'date',
             'label' => 'From Date',
             'icon' => 'heroicon-o-calendar',
+            'width' => 'w-40',
         ],
         [
             'name' => 'to_date',
             'type' => 'date',
             'label' => 'To Date',
             'icon' => 'heroicon-o-calendar',
+            'width' => 'w-40',
         ],
         [
             'name' => 'status',
@@ -21,12 +23,13 @@
             'label' => 'Order Status',
             'options' => $statuses->toArray(),
             'icon' => 'heroicon-o-tag',
+            'width' => 'w-48',
         ],
     ];
 @endphp
 
 @section('content')
-    <div class="max-w-8xl mx-auto p-4 space-y-6">
+    <div class="max-w-7xl mx-auto p-4 space-y-6">
         <div class="text-center py-6">
             <h1 class="text-2xl font-bold">My Transactions</h1>
         </div>
@@ -51,7 +54,6 @@
             <table class="w-full bg-[#FFF7FD] shadow rounded-lg overflow-hidden">
                 <thead class="bg-[#FFEBFA] text-gray-700 text-sm font-semibold">
                     <tr>
-                        <th class="px-4 py-2 text-left">Order ID</th>
                         <th class="px-4 py-2 text-left">Status</th>
                         <th class="px-4 py-2 text-left">Total Price</th>
                         <th class="px-4 py-2 text-left">Event Date</th>
@@ -62,13 +64,15 @@
                 <tbody class="text-sm text-gray-800 divide-y divide-gray-200">
                     @forelse ($orders as $order)
                         @php
-                            $event = optional($order->orderItems->first()->ticket->event);
+                            $orderItem = $order->orderItems->first();
+                            $event = optional(optional($orderItem)->ticket)->event;
                             $eventDate = $event->date ?? null;
-                            $canCancel = in_array($order->status, ['paid', 'pending']) && $eventDate && $eventDate->isFuture();
-                            $canRequestRefund = $order->status === 'paid' && !$order->refund && $eventDate && $eventDate->isPast();
+                            $canCancel =
+                                in_array($order->status, ['paid', 'pending']) && $eventDate && $eventDate->isFuture();
+                            $canRequestRefund =
+                                $order->status === 'paid' && !$order->refund && $eventDate && $eventDate->isPast();
                         @endphp
                         <tr>
-                            <td class="px-4 py-2">#{{ $order->id }}</td>
                             <td class="px-4 py-2 capitalize">
                                 <span class="px-2 py-1 rounded-full text-xs
                                     @if($order->status === 'paid') bg-green-100 text-green-800
@@ -149,7 +153,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center py-4 text-gray-500">No transactions found.</td>
+                            <td colspan="5" class="text-center py-4 text-gray-500">No transactions found.</td>
                         </tr>
                     @endforelse
                 </tbody>
