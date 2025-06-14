@@ -8,6 +8,7 @@ use App\Models\OrderItem;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -61,20 +62,21 @@ class OrderController extends Controller
         return view('pages.admin.orders.create', compact('tickets'));
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'status' => 'required|string|in:pending,paid,cancelled,refunded',
-            'tickets' => 'required|array|min:1',
-            'tickets.*.ticket_id' => 'required|distinct|exists:tickets,id',
-            'tickets.*.quantity' => 'required|integer|min:1|max:10',
-            'tickets.*.unit_price' => 'required|numeric|min:0',
-        ], [
-            'tickets.*.ticket_id.distinct' => 'Each ticket may only be selected once.',
-            'tickets.*.quantity.max' => 'You may only order up to 10 tickets per item.',
-        ]);
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'user_id' => 'required|exists:users,id',
+        'status' => 'required|string|in:pending,paid,cancelled,refunded',
+        'tickets' => 'required|array|min:1',
+        'tickets.*.ticket_id' => 'required|distinct|exists:tickets,id',
+        'tickets.*.quantity' => 'required|integer|min:1|max:10',
+        'tickets.*.unit_price' => 'required|numeric|min:0',
+    ], [
+        'tickets.*.ticket_id.distinct' => 'Each ticket may only be selected once.',
+        'tickets.*.quantity.max' => 'You may only order up to 10 tickets per item.',
+    ]);
 
+    DB::transaction(function () use ($validated) {
         $order = Order::create([
             'user_id' => $validated['user_id'],
             'status' => $validated['status'],
@@ -101,10 +103,12 @@ class OrderController extends Controller
             $event->ticketSold += $ticketData['quantity'];
             $event->save();
         }
-        $order->refresh()->updateTotalPrice();
 
-        return redirect()->route('admin.orders.index')->with('success', 'Order created successfully!');
-    }
+        $order->refresh()->updateTotalPrice();
+    });
+
+    return redirect()->route('admin.orders.index')->with('success', 'Order created successfully!');
+}
 
     public function edit(Order $order)
     {
