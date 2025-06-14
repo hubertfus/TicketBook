@@ -66,13 +66,6 @@ Route::middleware(['auth', 'check.roles:user'])->prefix('user')->name('user.')->
     Route::get('/payment/{event}', [PaymentController::class, 'show'])->name('payment.show');
     Route::post('/payment/{event}', [PaymentController::class, 'pay'])->name('payment.pay');
 
-    // Events (user browsing)
-    Route::prefix('events')->name('events.')->group(function () {
-        Route::get('/', [UserEventController::class, 'index'])->name('index');
-        Route::get('/{event}', [UserEventController::class, 'show'])->name('show');
-    });
-
-
     // Buy Ticket
     Route::post('/events/{event}/buy', [TicketPurchaseController::class, 'store'])->name('tickets.store');
 });

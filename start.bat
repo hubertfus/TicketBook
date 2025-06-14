@@ -69,6 +69,11 @@ call php artisan migrate
 call php artisan db:seed
 call php artisan storage:link
 
+call php artisan config:cache
+call php artisan route:cache
+call php artisan view:cache
+call php artisan optimize
+
 set SOURCE=public\images\placeholder.jpg
 set DEST=public\storage\seedImage.jpg
 
