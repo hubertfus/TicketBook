@@ -1,16 +1,22 @@
-@php
-    use Illuminate\Support\Facades\Storage;
-@endphp
-
 <style>
+    .carousel-wrapper {
+        position: relative;
+        width: 100%;
+        padding: 0 0rem;
+    }
+
     .carousel-container {
         position: relative;
         width: 100%;
+        overflow: hidden;
+        padding: 2rem 0;
+        margin: -2rem 0.75rem;
     }
 
     .swiper {
         width: 100%;
-        padding: 0 3rem;
+        padding: 0;
+        overflow: visible;
     }
 
     .swiper-wrapper {
@@ -22,6 +28,7 @@
         height: auto;
         display: flex;
         align-items: stretch;
+        margin-right: 0px !important;
     }
 
     .swiper-slide>div {
@@ -32,6 +39,7 @@
     .carousel-card {
         width: 100%;
         display: flex;
+        transform: scale(0.9);
     }
 
     .swiper-button-prev,
@@ -39,7 +47,7 @@
         color: #6B4E71;
         position: absolute;
         top: 50%;
-        transform: none;
+        transform: translateY(-50%);
         width: 3.5rem;
         height: 3.5rem;
         display: flex;
@@ -48,14 +56,15 @@
         cursor: pointer;
         flex-shrink: 0;
         z-index: 10;
+        overflow: visible;
     }
 
     .swiper-button-prev {
-        left: 0.5rem;
+        left: -2rem;
     }
 
     .swiper-button-next {
-        right: 0.5rem;
+        right: -2rem;
     }
 
     .swiper-button-prev:after,
@@ -87,7 +96,7 @@
     }
 
     @media (max-width: 639px) {
-        .swiper {
+        .carousel-wrapper {
             padding: 0;
         }
 
@@ -98,21 +107,22 @@
     }
 </style>
 
-<div class="carousel-container">
-    <div class="swiper mySwiper">
-        <div class="swiper-wrapper">
-            @foreach ($events as $event)
-                <div class="swiper-slide">
-                    <div class="carousel-card">
-                        {{-- Karta wydarzenia --}}
-                        <x-event-card :event="$event" class="carousel-card" />
+<div class="carousel-wrapper">
+    <div class="carousel-container">
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                @foreach ($events as $event)
+                    <div class="swiper-slide">
+                        <div class="carousel-card">
+                            {{-- Karta wydarzenia --}}
+                            <x-event-card :event="$event" class="carousel-card" />
+                        </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
+            <div class="swiper-pagination"></div>
         </div>
-        <div class="swiper-pagination"></div>
     </div>
-
     <div class="swiper-button-prev"></div>
     <div class="swiper-button-next"></div>
 </div>
@@ -121,7 +131,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const swiper = new Swiper('.mySwiper', {
             slidesPerView: 1,
-            spaceBetween: 20,
+            spaceBetween: 10,
             loop: false,
             watchOverflow: true,
             pagination: {
@@ -135,15 +145,15 @@
             breakpoints: {
                 640: {
                     slidesPerView: 1,
-                    spaceBetween: 20,
+                    spaceBetween: 0,
                 },
                 768: {
                     slidesPerView: 2,
-                    spaceBetween: 24,
+                    spaceBetween: 0,
                 },
                 1024: {
                     slidesPerView: 3,
-                    spaceBetween: 50,
+                    spaceBetween: 0,
                 },
             },
             on: {
