@@ -96,13 +96,12 @@ class OrderController extends Controller
                 'ticket_id' => $ticket->id,
                 'quantity' => $ticketData['quantity'],
                 'unit_price' => $ticketData['unit_price'],
-                'total_price' => $ticketData['quantity'] * $ticketData['unit_price'],
             ]);
 
             $event->ticketSold += $ticketData['quantity'];
             $event->save();
         }
-        $order->updateTotalPrice();
+        $order->refresh()->updateTotalPrice();
 
         return redirect()->route('admin.orders.index')->with('success', 'Order created successfully!');
     }
@@ -160,14 +159,13 @@ class OrderController extends Controller
                 'ticket_id' => $ticket->id,
                 'quantity' => $ticketData['quantity'],
                 'unit_price' => $ticketData['unit_price'],
-                'total_price' => $ticketData['quantity'] * $ticketData['unit_price'],
             ]);
 
             $event->ticketSold += $ticketData['quantity'];
             $event->save();
         }
 
-        $order->updateTotalPrice();
+        $order->refresh()->updateTotalPrice();
 
         return redirect()->route('admin.orders.index')->with('success', 'Order updated!');
     }
