@@ -29,6 +29,7 @@
                             @svg('heroicon-o-tag', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Title
                         </label>
                         <input type="text" name="title" value="{{ old('title', $event->title) }}" required
+                            minlength="5"
                             class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
                     </div>
                     <div>
@@ -77,7 +78,7 @@
                     <label class="block text-sm font-medium text-[#3A4454] mb-2">
                         @svg('heroicon-o-document-text', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Description
                     </label>
-                    <textarea name="description" rows="4" required
+                    <textarea name="description" rows="4" required required minlength="10"
                         class="w-full px-4 py-3 bg-white rounded-2xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]">{{ old('description', $event->description) }}</textarea>
                 </div>
 
@@ -88,6 +89,7 @@
                             @svg('heroicon-o-user', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Organizer
                         </label>
                         <input type="text" name="organizer" value="{{ old('organizer', $event->organizer) }}" required
+                            minlength="3"
                             class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
                     </div>
                     <div>
@@ -95,6 +97,7 @@
                             @svg('heroicon-o-map-pin', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Location
                         </label>
                         <input type="text" name="location" value="{{ old('location', $event->location) }}" required
+                            minlength="3"
                             class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
                     </div>
                 </div>
@@ -106,7 +109,7 @@
                             @svg('heroicon-o-user-group', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Total Tickets
                         </label>
                         <input type="number" name="totalTickets" value="{{ old('totalTickets', $event->totalTickets) }}"
-                            required
+                            required min="0"
                             class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
                     </div>
                     <div>
@@ -114,6 +117,7 @@
                             @svg('heroicon-o-ticket', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Tickets Sold
                         </label>
                         <input type="number" name="ticketSold" value="{{ old('ticketSold', $event->ticketSold) }}"
+                            min="0"
                             class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]" />
                     </div>
                 </div>

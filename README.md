@@ -1,66 +1,223 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Projekt AI1
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[Repozytorium projektu](https://github.com/hubertfus/TicketBook)
 
-## About Laravel
+[Tablica projektowa](https://github.com/users/hubertfus/projects/5)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Temat projektu
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Aplikacja stanowi intuicyjną platformę umożliwiającą użytkownikom szybkie i wygodne przeglądanie oraz kupowanie biletów na wydarzenia.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Zespół E4
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Profil                                         | Rola            |
+| ---------------------------------------------- | --------------- |
+| [Hubett Fusiarz](https://github.com/hubertfus) | lider zespołu   |
+| [Nadia Schiffer](https://github.com/gimroth)   | członek zespołu |
+| [Dawid Skiba](https://github.com/4rompery)     | członek zespołu |
+| [Emilia Szczęch](https://github.com/xmemxa)    | członek zespołu |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## Opis projektu
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Aplikacja umożliwiająca użytkownikom szybkie i wygodne kupowanie biletów na wydarzenia
 
-### Premium Partners
+Aplikacja stanowi intuicyjną platformę, która pozwala użytkownikom w prosty sposób przeglądać i kupować bilety na różnorodne wydarzenia, takie jak koncerty, spektakle teatralne, wydarzenia sportowe czy festiwale. Dzięki przejrzystemu interfejsowi, użytkownicy mogą:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+-   Rejestracja i logowanie użytkowników,
+-   Możliwość wyszukiwania dostępnych wydarzeń według różnych kryteriów: data,
+    miejsce, typ wydarzenia,
+-   Filtry umożliwiające zawężenie wyników,
+-   Wyświetlanie szczegółów wydarzenia, takich jak opis, data, godzina, lokalizacja,
+-   Zakup biletów,
+-   Monitorowanie dostępności biletów w czasie rzeczywistym,
+-   Możliwość anulowania zakupu,
+-   Obsługa zwrotów pieniędzy,
+-   Możliwość dodawania ocen i recenzji przez użytkowników po odbyciu
+    wydarzenia,
 
-## Contributing
+### Narzędzia i technologie
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Technologia                      | Wersja |
+| -------------------------------- | ------ |
+| **Laravel Framework**            | ^12.0  |
+| **barryvdh/laravel-dompdf**      | ^3.1   |
+| **blade-ui-kit/blade-heroicons** | ^2.6   |
+| **blade-ui-kit/blade-icons**     | ^1.8   |
+| **Vite**                         | ^6.2.4 |
+| **Tailwind CSS**                 | ^4.0.0 |
+| **Alpine.js**                    | 3.x.x  |
+| **Swiper.js**                    | 9.x    |
 
-## Code of Conduct
+## Uruchomienie aplikacji
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Wymagania wstępne
 
-## Security Vulnerabilities
+Aby uruchomić projekt lokalnie, należy mieć zainstalowane:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+-   PHP (>= 8.2)
+-   Composer
+-   PostgreSQL (zalecana wersja 14 lub nowsza)
+-   Node.js wraz z NPM
+-   Laravel CLI (opcjonalnie)
+-   Git
 
-## License
+### Krok po kroku:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. **Sklonuj repozytorium:**
+
+```bash
+git clone https://github.com/hubertfus/TicketBook.git
+cd TicketBook
+```
+
+2. **Sprawdź, czy Composer i PostgreSQL są zainstalowane oraz dodane do zmiennych środowiskowych PATH.**
+
+Skrypt `start.bat` samodzielnie weryfikuje obecność Composer oraz PostgreSQL w systemie.
+
+3. **Uruchomienie skryptu startowego na systemie Windows:**
+
+W katalogu głównym projektu uruchom plik start.bat (dwukrotnie klikając lub uruchamiając przez terminal):
+
+```bash
+start.bat
+```
+
+Skrypt automatycznie:
+
+-   Sprawdza obecność Composer i PostgreSQL,
+-   Uruchamia PostgreSQL (jeśli nie był uruchomiony),
+-   Instaluje zależności PHP przez Composer,
+-   Tworzy plik `.env` jeśli nie istnieje (kopiuje z `.env.example`),
+-   Generuje klucz aplikacji Laravel (`php artisan key:generate`),
+-   Wykonuje migracje bazy danych (`php artisan migrate`),
+-   Wykonuje seedy bazy danych (`php artisan db:seed`),
+-   Tworzy link do katalogu storage (`php artisan storage:link`),
+-   Optymalizuje konfigurację, cache i widoki aplikacji,
+-   Kopiuje plik placeholder dla obrazów,
+-   Uruchamia backendową aplikację Laravel (`php artisan serve`),
+-   Instaluje zależności frontendowe przez NPM,
+-   Uruchamia frontendowy serwer deweloperski Vite (`npm run dev`).
+
+4. **Ręczne uruchomienie (jeśli chcesz ręcznie odpalić aplikację):**
+
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan storage:link
+php artisan serve
+npm install
+npm run dev
+```
+
+5. **Domyślny adres aplikacji:**
+
+```
+http://127.0.0.1:8000
+```
+
+---
+
+Przykładowi użytkownicy aplikacji:
+
+-   administrator: admin@example.com password123
+-   użytkownik: jan@example.com password123
+-   użytkownik: user1@example.com password123
+
+### Baza danych
+
+![Diagram ERD](./docs-img/erd.png)
+
+## Widoki aplikacji
+
+![Strona główna](./docs-img/landingpage.png)
+_Strona główna_
+
+![Logowanie](./docs-img/login.png)
+_Logowanie_
+
+![Rejestracja](./docs-img/rejestracja.png)
+_Rejestracja_
+
+![Przypominanie hasła](./docs-img/przypominaniehasla.png)
+_Przypominanie hasła_
+
+![Przypominanie hasła alert](./docs-img/przypominaniehaslaalert.png)
+_Przypominanie hasła alert_
+
+![Resetowanie hasła](./docs-img/resetowaniehasla.png)
+_Przypominanie hasła alert_
+
+![Widok wydarzenia user](./docs-img/widokwydarzeniezalogowany.png)
+_Widok wydarzeń dla użytkownika_
+
+![Widok szeczegolow wydarzenia user](./docs-img/szczegolybiletu.png)
+_Widok szczegółów wydarzenia_
+
+![Widok transakcji user](./docs-img/transakcjeuzytkownik.png)
+_Widok transakcji użytkownika_
+
+![Widok szczegolow transakcji user](./docs-img/szczegolytransakcji.png)
+_Widok szczegółów transakcji użytkownika_
+
+![Widok potwierdzenia zakupu user](./docs-img/potwierdzeniezakupu.png)
+_Widok potwierdzenia zakupu_
+
+![Widok danych uzytkownik](./docs-img/daneuzytkonik.png)
+_Widok danych użytkownika_
+
+![Widok topup uzytkownik](./docs-img/topupuzytkownik.png)
+_Widok kodów top-up użytkownika_
+
+![Widok topup uzytkownik](./docs-img/topupuzytkownik.png)
+_Widok kodów top-up użytkownika_
+
+![Widok odbierania topup uzytkownik](./docs-img/odbieraniekodow.png)
+_Widok odbierania kodów top-up użytkownika_
+
+![Widok zakupu biletu uzytkownik](./docs-img/zakupbiletu1.png)
+_Widok zakupu biletu_
+
+![Widok zatwierdzenie zakupu uzytkownik](./docs-img/zatwierdzeniezakupu.png)
+_Widok zatwierdzenia zakupu_
+
+![Widok dashboard admin](./docs-img/dashboardadmina.png)
+_Widok dashboardu admina_
+
+![Widok transakcji admin](./docs-img/transakcjieadmin.png)
+![Widok dodawanie transakcji admin](./docs-img/dodawanietransakcji.png)
+![Widok edycji transakcji admin](./docs-img/edycjatransakcji.png)
+_Widok transakcji admina_
+
+![Widok zwroty admin](./docs-img/zwrotyadmin.png)
+_Widok zwrotów admina_
+
+![Widok uzytkownikow admin](./docs-img/uzytkownicyadmin.png)
+![Widok dodawnie uzytkownika admin](./docs-img/dodawanieuzytkownika.png)
+![Widok edycja uzytkownika admin](./docs-img/edycjauzytkownika.png)
+_Widok użytkowników admin_
+
+![Widok wydarzen admin](./docs-img/wydarzeniaadmin.png)
+![Widok dodawnie wydarzenia admin](./docs-img/dodawaniewydarzenia.png)
+![Widok edycja wydarzenia admin](./docs-img/edycjawydarzenia.png)
+_Widok użytkowników admin_
+
+![Widok biletow admin](./docs-img/biletyadmin.png)
+![Widok dodawnie biletu admin](./docs-img/dodawaniebiletu.png)
+![Widok edycja biletu admin](./docs-img/edytowaniebiletu.png)
+_Widok biletów admin_
+
+![Widok komentarzy admin](./docs-img/komentarzeadmin.png)
+![Widok dodawnie komentarza admin](./docs-img/dodawaniekomentarza.png)
+![Widok edycja biletu admin](./docs-img/edytowaniekomentarza.png)
+_Widok komentarzy admin_
+
+![Widok generowanie kodow topup admin](./docs-img/generowanietopup.png)
+_Widok generowanie kodów top-up admin_
