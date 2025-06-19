@@ -14,7 +14,7 @@
             'name' => 'status',
             'type' => 'select',
             'label' => 'Refund status',
-            'options' => ['pending' => 'Pending', 'approved' => 'Approved', 'rejected' => 'Rejected'],
+            'options' => ['requested' => 'Requested', 'approved' => 'Approved', 'rejected' => 'Rejected'],
             'icon' => 'heroicon-o-tag',
         ],
         [
@@ -66,7 +66,7 @@
                         <td class="px-4 py-2">{{ $refund->reason }}</td>
                         <td class="px-4 py-2 capitalize">{{ $refund->status }}</td>
                         <td class="px-4 py-2 space-x-2">
-                            @if ($refund->status === 'pending')
+                            @if ($refund->status === 'requested')
                                 <form action="{{ route('admin.refunds.approve', $refund) }}" method="POST" class="inline">
                                     @csrf
                                     <button
