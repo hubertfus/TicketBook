@@ -11,26 +11,48 @@
         </div>
     @endif
 
+    @php
+        $ticketsData = old(
+            'tickets',
+            $order->orderItems->map(fn($item) => [
+                'ticket_id'   => $item->ticket_id,
+                'quantity'    => $item->quantity,
+                'unit_price'  => $item->unit_price,
+            ])->toArray()
+        );
+
+        $firstTicket = $tickets->firstWhere('id', $ticketsData[0]['ticket_id'] ?? null);
+        $currentEventId = $firstTicket->event_id ?? null;
+
+        $filteredTickets = $tickets->where('event_id', $currentEventId)->values()->map(fn($t) => [
+            'id'    => $t->id,
+            'label' => $t->category . ' – ' . $t->event->title . ' (' . number_format($t->price,2) . ' PLN)',
+            'price' => $t->price,
+        ])->toArray();
+
+        $allTicketsJs = $tickets->map(fn($t) => [
+            'id'       => $t->id,
+            'label'    => $t->category . ' – ' . $t->event->title . ' (' . number_format($t->price,2) . ' PLN)',
+            'price'    => $t->price,
+            'event_id' => $t->event_id,
+        ])->toArray();
+    @endphp
+
     <div class="min-h-screen bg-[#FFF7FD] py-10 px-4">
         <div class="max-w-4xl mx-auto bg-[#FFEBFA] rounded-2xl shadow-lg p-8">
             <h2 class="text-3xl font-extrabold text-[#3A4454] flex items-center gap-2 mb-6">
-                @svg('heroicon-o-pencil-square', 'w-6 h-6 text-[#6B4E71]') Edit Order
+                @svg('heroicon-o-pencil-square','w-6 h-6 text-[#6B4E71]') Edit Order
             </h2>
 
             <form action="{{ route('admin.orders.update', $order) }}" method="POST" class="space-y-6">
-                @csrf
-                @method('PUT')
+                @csrf @method('PUT')
 
                 {{-- User --}}
                 <div>
-                    <label class="block text-sm font-medium text-[#3A4454] mb-2">
-                        @svg('heroicon-o-user', 'w-4 h-4 inline mr-1 text-[#6B4E71]') User
-                    </label>
-                    <select name="user_id" required
-                        class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]">
-                        @foreach (\App\Models\User::all() as $user)
-                            <option value="{{ $user->id }}"
-                                {{ $user->id == old('user_id', $order->user_id) ? 'selected' : '' }}>
+                    <label class="block text-sm font-medium text-[#3A4454] mb-2">User</label>
+                    <select name="user_id" required class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:ring-2">
+                        @foreach(\App\Models\User::all() as $user)
+                            <option value="{{ $user->id }}" {{ $user->id==old('user_id',$order->user_id)?'selected':'' }}>
                                 {{ $user->name }} ({{ $user->email }})
                             </option>
                         @endforeach
@@ -39,63 +61,40 @@
 
                 {{-- Status --}}
                 <div>
-                    <label class="block text-sm font-medium text-[#3A4454] mb-2">
-                        @svg('heroicon-o-flag', 'w-4 h-4 inline mr-1 text-[#6B4E71]') Status
-                    </label>
-                    <select name="status" required
-                        class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6B4E71]">
-                        @foreach (['pending', 'paid', 'cancelled', 'refunded'] as $status)
-                            <option value="{{ $status }}"
-                                {{ $status == old('status', $order->status) ? 'selected' : '' }}>
-                                {{ ucfirst($status) }}
-                            </option>
+                    <label class="block text-sm font-medium text-[#3A4454] mb-2">Status</label>
+                    <select name="status" required class="w-full px-4 py-3 bg-white rounded-xl shadow-inner focus:ring-2">
+                        @foreach(['pending','paid','cancelled','refunded'] as $status)
+                            <option value="{{ $status }}" {{ $status==old('status',$order->status)?'selected':'' }}>{{ ucfirst($status) }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                {{-- Tickets (Order Items) --}}
+                {{-- Tickets --}}
                 <div id="ticket-items" class="space-y-4">
-                    @foreach (old('tickets', $order->orderItems->map(
-                        fn($item) => [
-                            'ticket_id' => $item->ticket_id,
-                            'quantity' => $item->quantity,
-                            'unit_price' => $item->unit_price,
-                        ],
-                    )->toArray()) as $index => $ticketItem)
+                    @foreach($ticketsData as $i=>$item)
                         <div class="ticket-item relative bg-white p-4 rounded-xl shadow-sm border border-gray-200">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                                 <div>
-                                    <label class="block text-sm font-medium text-[#3A4454] mb-2">Ticket</label>
-                                    <select name="tickets[{{ $index }}][ticket_id]"
-                                        class="ticket-select w-full px-4 py-3 bg-white rounded-xl shadow-inner" required>
-                                        @foreach ($tickets as $ticket)
-                                            <option value="{{ $ticket->id }}"
-                                                data-price="{{ $ticket->price }}"
-                                                data-event-id="{{ $ticket->event_id }}"
-                                                {{ $ticket->id == $ticketItem['ticket_id'] ? 'selected' : '' }}>
-                                                {{ $ticket->category }} – {{ $ticket->event->title }}
-                                                ({{ number_format($ticket->price, 2) }} PLN)
-                                            </option>
+                                    <label class="block text-sm font-medium mb-2">Ticket</label>
+                                    <select name="tickets[{{ $i }}][ticket_id]" class="ticket-select w-full px-4 py-3 bg-white rounded-xl shadow-inner" required>
+                                        @foreach($filteredTickets as $t)
+                                            <option value="{{ $t['id'] }}" data-price="{{ $t['price'] }}"
+                                                {{ $t['id']==$item['ticket_id']?'selected':'' }}>{{ $t['label'] }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-[#3A4454] mb-2">Quantity</label>
-                                    <input type="number" name="tickets[{{ $index }}][quantity]" min="1"
-                                        max="10" value="{{ $ticketItem['quantity'] }}"
-                                        class="ticket-quantity w-full px-4 py-3 bg-white rounded-xl shadow-inner"
-                                        required />
+                                    <label class="block text-sm font-medium mb-2">Quantity</label>
+                                    <input type="number" name="tickets[{{ $i }}][quantity]" min="1" max="10" value="{{ $item['quantity'] }}" class="ticket-quantity w-full px-4 py-3 bg-white rounded-xl shadow-inner" required>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-[#3A4454] mb-2">Unit Price (PLN)</label>
-                                    <input type="number" name="tickets[{{ $index }}][unit_price]" step="0.01"
-                                        value="{{ $ticketItem['unit_price'] }}"
-                                        class="ticket-price w-full px-4 py-3 bg-white rounded-xl shadow-inner" required />
+                                    <label class="block text-sm font-medium mb-2">Unit Price</label>
+                                    <input type="number" name="tickets[{{ $i }}][unit_price]" step="0.01" value="{{ $item['unit_price'] }}" class="ticket-price w-full px-4 py-3 bg-white rounded-xl shadow-inner" required>
                                 </div>
                             </div>
-                            @if($index > 0)
+                            @if($i>0)
                                 <button type="button" class="remove-ticket absolute top-2 right-2 text-red-500 hover:text-red-700">
-                                    @svg('heroicon-o-x-mark', 'w-5 h-5')
+                                    @svg('heroicon-o-x-mark','w-5 h-5')
                                 </button>
                             @endif
                         </div>
@@ -103,38 +102,28 @@
                 </div>
 
                 <button type="button" id="add-ticket-btn" class="px-4 py-2 bg-[#6B4E71] text-white rounded-lg hover:bg-[#8D6595] transition">
-                    @svg('heroicon-o-plus', 'w-4 h-4 inline mr-1') Add Another Ticket
+                    @svg('heroicon-o-plus','w-4 h-4 inline mr-1') Add Another Ticket
                 </button>
 
                 <div class="mt-6 text-right text-xl font-semibold text-[#6B4E71]">
                     Total: <span id="total-amount">0.00</span> PLN
                 </div>
 
-                {{-- Submit --}}
                 <div class="pt-6 border-t border-[#6B4E71]/20 flex justify-end gap-4">
-                    <a href="{{ route('admin.orders.index') }}"
-                        class="px-6 py-3 rounded-xl bg-transparent border border-[#6B4E71] text-[#6B4E71] hover:bg-[#6B4E71] hover:text-white transition">Cancel</a>
-                    <button type="submit"
-                        class="px-8 py-3 rounded-xl bg-gradient-to-r from-[#6B4E71] to-[#8D6595] text-white font-semibold shadow-md hover:opacity-90 transition">Save
-                        Changes</button>
+                    <a href="{{ route('admin.orders.index') }}" class="px-6 py-3 rounded-xl border border-[#6B4E71] text-[#6B4E71] hover:bg-[#6B4E71] hover:text-white">Cancel</a>
+                    <button type="submit" class="px-8 py-3 rounded-xl bg-gradient-to-r from-[#6B4E71] to-[#8D6595] text-white font-semibold shadow-md hover:opacity-90">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
-<script>
+    <script>
     document.addEventListener('DOMContentLoaded', () => {
-        let ticketIndex = {{ count(old('tickets', $order->orderItems)) }};
-        let currentEventId = {{ $order->orderItems->first()->ticket->event_id ?? 'null' }};
+        let ticketIndex = {{ count($ticketsData) }};
+        let currentEventId = null;
 
-        const allTickets = {!! json_encode($tickets->map(function($ticket) {
-            return [
-                'id' => $ticket->id,
-                'event_id' => $ticket->event_id,
-                'price' => $ticket->price,
-                'text' => $ticket->category . ' – ' . $ticket->event->title . ' (' . number_format($ticket->price, 2) . ' PLN)'
-            ];
-        })) !!};
+        const allTickets = @json($allTicketsJs);
+        const filteredTickets = @json($filteredTickets);
 
         function updateTotal() {
             let total = 0;
@@ -146,238 +135,135 @@
             document.getElementById('total-amount').textContent = total.toFixed(2);
         }
 
-        function setPriceFromSelect(select) {
-            const selected = select.options[select.selectedIndex];
-            if (!selected) return;
-            const price = selected.getAttribute('data-price');
-            const eventId = selected.getAttribute('data-event-id');
-            const container = select.closest('.ticket-item');
-            container.querySelector('.ticket-price').value = price;
-
-            const isFirstTicket = container === document.querySelector('.ticket-item');
-            if (isFirstTicket && currentEventId !== eventId) {
-                currentEventId = eventId;
-                updateOtherTicketsEvent();
-            }
-
-            updateTotal();
-        }
-
-        function updateOtherTicketsEvent() {
-            const ticketItems = document.querySelectorAll('.ticket-item');
-            if (ticketItems.length <= 1) return;
-
-            const availableTickets = allTickets.filter(t => t.event_id == currentEventId);
-            if (availableTickets.length === 0) return;
-
-            for (let i = 1; i < ticketItems.length; i++) {
-                const select = ticketItems[i].querySelector('.ticket-select');
-                const currentValue = select.value;
-
-                select.innerHTML = '';
-                availableTickets.forEach(ticket => {
-                    const option = document.createElement('option');
-                    option.value = ticket.id;
-                    option.textContent = ticket.text;
-                    option.setAttribute('data-price', ticket.price);
-                    option.setAttribute('data-event-id', ticket.event_id);
-                    select.appendChild(option);
-                });
-
-                const ticketExists = availableTickets.some(t => t.id == currentValue);
-                if (ticketExists) {
-                    select.value = currentValue;
-                } else {
-                    select.value = availableTickets[0].id;
-                }
-
-                setPriceFromSelect(select);
-            }
-
-            updateAddButtonState();
-        }
-
         function getSelectedTicketIds() {
-            return Array.from(document.querySelectorAll('.ticket-select'))
-                .map(select => select.value)
-                .filter(id => id !== '');
+            return Array.from(document.querySelectorAll('.ticket-select')).map(sel => sel.value).filter(v => v);
         }
 
-        function hasDuplicateTicketIds() {
-            const ids = getSelectedTicketIds();
-            return new Set(ids).size !== ids.length;
+        function getSelectedEventIds() {
+            return Array.from(document.querySelectorAll('.ticket-select')).map(sel => sel.selectedOptions[0].dataset.eventId).filter(v => v);
         }
 
-        function getAvailableTickets() {
-            const selectedTicketIds = getSelectedTicketIds();
-            return allTickets.filter(ticket =>
-                ticket.event_id == currentEventId &&
-                !selectedTicketIds.includes(ticket.id.toString())
-            );
+        function hasMultipleEvents() {
+            return new Set(getSelectedEventIds()).size > 1;
+        }
+
+        function setCurrentEvent() {
+            const ids = getSelectedEventIds();
+            const unique = [...new Set(ids)];
+            currentEventId = unique.length === 1 ? unique[0] : null;
         }
 
         function updateAddButtonState() {
-            const addButton = document.getElementById('add-ticket-btn');
+            const btn = document.getElementById('add-ticket-btn');
             if (!currentEventId) {
-                addButton.disabled = true;
-                addButton.title = "Please select a ticket type first";
+                btn.disabled = true;
+                btn.title = 'Select a ticket type first';
                 return;
             }
-
-            const availableTickets = getAvailableTickets();
-            addButton.disabled = availableTickets.length === 0;
-
-            if (availableTickets.length === 0) {
-                addButton.title = "All ticket types for this event have been added";
-            } else {
-                addButton.title = "";
-            }
+            const avail = allTickets.filter(t => t.event_id == currentEventId && !getSelectedTicketIds().includes(String(t.id)));
+            btn.disabled = avail.length === 0;
+            btn.title = avail.length === 0 ? 'No more ticket types for this event' : '';
         }
 
-        function validateAll() {
-            if (hasDuplicateTicketIds()) {
-                alert("You can't select the same ticket more than once.");
-                return false;
-            }
+        function restrictSelectOptions() {
+            const selects = document.querySelectorAll('.ticket-select');
+            const single = selects.length === 1;
+            selects.forEach(sel => {
+                Array.from(sel.options).forEach(opt => {
+                    opt.disabled = !single && opt.dataset.eventId !== currentEventId;
+                });
+            });
+        }
 
-            const allEventIds = Array.from(document.querySelectorAll('.ticket-select'))
-                .map(select => select.options[select.selectedIndex]?.getAttribute('data-event-id'))
-                .filter(id => id);
+        function updateIndices() {
+            document.querySelectorAll('.ticket-item').forEach((div, i) => {
+                div.querySelector('.ticket-select').name = `tickets[${i}][ticket_id]`;
+                div.querySelector('.ticket-quantity').name = `tickets[${i}][quantity]`;
+                div.querySelector('.ticket-price').name = `tickets[${i}][unit_price]`;
+            });
+        }
 
-            const uniqueEventIds = [...new Set(allEventIds)];
-            if (uniqueEventIds.length > 1) {
-                alert("All tickets must be from the same event.");
-                return false;
-            }
+        function bindItem(div) {
+            const sel = div.querySelector('.ticket-select');
+            const qty = div.querySelector('.ticket-quantity');
+            const price = div.querySelector('.ticket-price');
+            const rem = div.querySelector('.remove-ticket');
 
-            let valid = true;
-            document.querySelectorAll('.ticket-quantity').forEach(input => {
-                const val = parseInt(input.value);
-                if (val > 10) {
-                    alert("Maximum quantity per ticket is 10.");
-                    input.value = 10;
-                    valid = false;
+            sel.addEventListener('change', e => {
+                if (hasMultipleEvents()) {
+                    alert('All tickets must be from the same event');
+                    e.target.value = '';
+                    return;
                 }
+                setCurrentEvent();
+                restrictSelectOptions();
+                price.value = sel.selectedOptions[0].dataset.price;
+                updateAddButtonState();
+                updateTotal();
             });
-
-            return valid;
-        }
-
-        function updateTicketIndexes() {
-            document.querySelectorAll('.ticket-item').forEach((item, index) => {
-                item.querySelector('.ticket-select').setAttribute('name', `tickets[${index}][ticket_id]`);
-                item.querySelector('.ticket-quantity').setAttribute('name', `tickets[${index}][quantity]`);
-                item.querySelector('.ticket-price').setAttribute('name', `tickets[${index}][unit_price]`);
+            qty.addEventListener('input', updateTotal);
+            price.addEventListener('input', updateTotal);
+            if (rem) rem.addEventListener('click', () => {
+                div.remove();
+                updateIndices();
+                setCurrentEvent();
+                restrictSelectOptions();
+                updateAddButtonState();
+                const items = document.querySelectorAll('.ticket-item');
+                if (items.length === 1) {
+                    const first = items[0].querySelector('.ticket-select');
+                    first.innerHTML = allTickets.map(t => `<option value="${t.id}" data-price="${t.price}" data-event-id="${t.event_id}">${t.label}</option>`).join('');
+                    first.dispatchEvent(new Event('change'));
+                }
+                updateTotal();
             });
         }
 
-        function removeTicket(button) {
-            const ticketItems = document.querySelectorAll('.ticket-item');
-            if (ticketItems.length <= 1) {
-                alert('You must have at least one ticket in the order.');
-                return;
-            }
+        document.querySelectorAll('.ticket-item').forEach(bindItem);
 
-            const ticketItem = button.closest('.ticket-item');
-            ticketItem.remove();
-            updateTicketIndexes();
-            updateTotal();
-            updateAddButtonState();
-        }
+        document.getElementById('add-ticket-btn').addEventListener('click', () => {
+            if (!currentEventId) return alert('Select a ticket type first');
+            const ids = getSelectedTicketIds();
+            const avail = allTickets.filter(t => t.event_id == currentEventId && !ids.includes(String(t.id)));
+            if (avail.length === 0) return alert('No more ticket types for this event');
 
-        function addTicketItem() {
-            const availableTickets = getAvailableTickets();
-            if (availableTickets.length === 0) return alert("All ticket types for this event have been added");
-
-            const ticket = availableTickets[0];
-            const container = document.getElementById('ticket-items');
+            const t = avail[0];
             const div = document.createElement('div');
-            div.classList.add('ticket-item', 'relative', 'bg-white', 'p-4', 'rounded-xl', 'shadow-sm', 'border', 'border-gray-200');
+            div.className = 'ticket-item relative bg-white p-4 rounded-xl shadow-sm border border-gray-200';
             div.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                     <div>
-                        <label class="block text-sm font-medium text-[#3A4454] mb-2">Ticket</label>
+                        <label class="block text-sm font-medium mb-2">Ticket</label>
                         <select name="tickets[${ticketIndex}][ticket_id]" class="ticket-select w-full px-4 py-3 bg-white rounded-xl shadow-inner" required>
-                            ${allTickets
-                                .filter(t => t.event_id == currentEventId)
-                                .filter(t => !getSelectedTicketIds().includes(t.id.toString()))
-                                .map(t => `<option value="${t.id}" data-price="${t.price}" data-event-id="${t.event_id}" ${t.id == ticket.id ? 'selected' : ''}>${t.text}</option>`)
-                                .join('')}
+                            ${allTickets.filter(tu => tu.event_id == currentEventId && !ids.includes(String(tu.id))).map(tu => `<option value="${tu.id}" data-price="${tu.price}" data-event-id="${tu.event_id}">${tu.label}</option>`).join('')}
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-[#3A4454] mb-2">Quantity</label>
+                        <label class="block text-sm font-medium mb-2">Quantity</label>
                         <input type="number" name="tickets[${ticketIndex}][quantity]" min="1" max="10" value="1" class="ticket-quantity w-full px-4 py-3 bg-white rounded-xl shadow-inner" required />
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-[#3A4454] mb-2">Unit Price (PLN)</label>
-                        <input type="number" name="tickets[${ticketIndex}][unit_price]" step="0.01" value="${ticket.price}" class="ticket-price w-full px-4 py-3 bg-white rounded-xl shadow-inner" required />
+                        <label class="block text-sm font-medium mb-2">Unit Price</label>
+                        <input type="number" name="tickets[${ticketIndex}][unit_price]" step="0.01" value="${t.price}" class="ticket-price w-full px-4 py-3 bg-white rounded-xl shadow-inner" required />
                     </div>
                 </div>
-                <button type="button" class="remove-ticket absolute top-2 right-2 text-red-500 hover:text-red-700">
-                    @svg('heroicon-o-x-mark', 'w-5 h-5')
-                </button>
+                <button type="button" class="remove-ticket absolute top-2 right-2 text-red-500 hover:text-red-700">@svg('heroicon-o-x-mark','w-5 h-5')</button>
             `;
-
-            container.appendChild(div);
-
-            div.querySelector('.ticket-select').addEventListener('change', (e) => {
-                setPriceFromSelect(e.target);
-                if (hasDuplicateTicketIds()) {
-                    alert("You can't select the same ticket more than once.");
-                    e.target.value = '';
-                }
-                updateAddButtonState();
-            });
-
-            div.querySelector('.ticket-quantity').addEventListener('input', updateTotal);
-            div.querySelector('.ticket-price').addEventListener('input', updateTotal);
-            div.querySelector('.remove-ticket').addEventListener('click', (e) => {
-                removeTicket(e.target);
-            });
-
+            document.getElementById('ticket-items').appendChild(div);
+            bindItem(div);
             ticketIndex++;
+            updateIndices();
+            restrictSelectOptions();
             updateAddButtonState();
             updateTotal();
-        }
-
-        document.querySelectorAll('.ticket-select').forEach(select => {
-            select.addEventListener('change', (e) => {
-                setPriceFromSelect(e.target);
-                if (hasDuplicateTicketIds()) {
-                    alert("You can't select the same ticket more than once.");
-                    e.target.value = '';
-                }
-                updateAddButtonState();
-            });
-            setPriceFromSelect(select);
         });
 
-        document.querySelectorAll('.ticket-quantity').forEach(input => {
-            input.addEventListener('input', updateTotal);
-        });
-
-        document.querySelectorAll('.ticket-price').forEach(input => {
-            input.addEventListener('input', updateTotal);
-        });
-
-        document.querySelectorAll('.remove-ticket').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                removeTicket(e.target);
-            });
-        });
-
-        document.getElementById('add-ticket-btn').addEventListener('click', () => {
-            addTicketItem();
-        });
-
-        document.querySelector('form').addEventListener('submit', (e) => {
-            if (!validateAll()) {
-                e.preventDefault();
-            }
-        });
-
-        updateAddButtonState();
+        document.querySelectorAll('.ticket-select')[0]?.dispatchEvent(new Event('change'));
+        setTimeout(() => {
+            setCurrentEvent();
+            restrictSelectOptions();
+            updateAddButtonState();
+        }, 0);
         updateTotal();
     });
 </script>
