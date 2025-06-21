@@ -14,6 +14,8 @@
         <!-- Navigation Links -->
         <div class="flex items-center gap-8 flex-1 justify-end">
             <a class="text-lg font-medium text-black hover:underline transition"
+                href="{{ route('user.events.index') }}">Events</a>
+            <a class="text-lg font-medium text-black hover:underline transition"
                 href="{{ route('user.events.index', ['filter' => 'trending']) }}">Trending</a>
             <a class="text-lg font-medium text-black hover:underline transition"
                 href="{{ route('user.events.index', ['filter' => 'new']) }}">Newly Added</a>

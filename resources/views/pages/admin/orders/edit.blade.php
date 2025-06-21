@@ -28,6 +28,7 @@
             'id'    => $t->id,
             'label' => $t->category . ' – ' . $t->event->title . ' (' . number_format($t->price,2) . ' PLN)',
             'price' => $t->price,
+            'event_id' => $t->event_id,
         ])->toArray();
 
         $allTicketsJs = $tickets->map(fn($t) => [
@@ -35,7 +36,7 @@
             'label'    => $t->category . ' – ' . $t->event->title . ' (' . number_format($t->price,2) . ' PLN)',
             'price'    => $t->price,
             'event_id' => $t->event_id,
-        ])->toArray();
+        ])->values()->toArray();
     @endphp
 
     <div class="min-h-screen bg-[#FFF7FD] py-10 px-4">
@@ -78,7 +79,7 @@
                                     <label class="block text-sm font-medium mb-2">Ticket</label>
                                     <select name="tickets[{{ $i }}][ticket_id]" class="ticket-select w-full px-4 py-3 bg-white rounded-xl shadow-inner" required>
                                         @foreach($filteredTickets as $t)
-                                            <option value="{{ $t['id'] }}" data-price="{{ $t['price'] }}"
+                                            <option value="{{ $t['id'] }}" data-price="{{ $t['price'] }}" data-event-id="{{ $t['event_id'] }}"
                                                 {{ $t['id']==$item['ticket_id']?'selected':'' }}>{{ $t['label'] }}</option>
                                         @endforeach
                                     </select>
@@ -120,9 +121,9 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         let ticketIndex = {{ count($ticketsData) }};
-        let currentEventId = null;
+        let currentEventId = @json($currentEventId);
 
-        const allTickets = @json($allTicketsJs);
+        const allTickets = Object.values(@json($allTicketsJs));
         const filteredTickets = @json($filteredTickets);
 
         function updateTotal() {
@@ -140,7 +141,7 @@
         }
 
         function getSelectedEventIds() {
-            return Array.from(document.querySelectorAll('.ticket-select')).map(sel => sel.selectedOptions[0].dataset.eventId).filter(v => v);
+            return Array.from(document.querySelectorAll('.ticket-select')).map(sel => sel.selectedOptions[0]?.dataset.eventId).filter(v => v);
         }
 
         function hasMultipleEvents() {
@@ -155,22 +156,40 @@
 
         function updateAddButtonState() {
             const btn = document.getElementById('add-ticket-btn');
+            const selectedIds = getSelectedTicketIds();
+            const avail = allTickets.filter(t =>
+                t.event_id == currentEventId &&
+                !selectedIds.includes(String(t.id))
+            );
             if (!currentEventId) {
                 btn.disabled = true;
                 btn.title = 'Select a ticket type first';
                 return;
             }
-            const avail = allTickets.filter(t => t.event_id == currentEventId && !getSelectedTicketIds().includes(String(t.id)));
             btn.disabled = avail.length === 0;
-            btn.title = avail.length === 0 ? 'No more ticket types for this event' : '';
+            btn.title = avail.length === 0
+                ? 'No more ticket types for this event'
+                : '';
         }
 
         function restrictSelectOptions() {
             const selects = document.querySelectorAll('.ticket-select');
+            const selectedIds = getSelectedTicketIds();
             const single = selects.length === 1;
-            selects.forEach(sel => {
-                Array.from(sel.options).forEach(opt => {
-                    opt.disabled = !single && opt.dataset.eventId !== currentEventId;
+
+            selects.forEach(currentSelect => {
+                const currentValue = currentSelect.value;
+
+                Array.from(currentSelect.options).forEach(opt => {
+                    const ticketId = opt.value;
+                    const eventId = opt.dataset.eventId;
+
+                    const isSelectedElsewhere = selectedIds.includes(ticketId) && ticketId !== currentValue;
+
+                    const isDifferentEvent = !single && currentEventId && eventId !== currentEventId;
+
+                    opt.disabled = isSelectedElsewhere || isDifferentEvent;
+                    opt.style.display = isSelectedElsewhere ? 'none' : '';
                 });
             });
         }
@@ -197,12 +216,17 @@
                 }
                 setCurrentEvent();
                 restrictSelectOptions();
-                price.value = sel.selectedOptions[0].dataset.price;
+                const selectedOption = sel.selectedOptions[0];
+                if (selectedOption) {
+                    price.value = selectedOption.dataset.price;
+                }
                 updateAddButtonState();
                 updateTotal();
             });
+
             qty.addEventListener('input', updateTotal);
             price.addEventListener('input', updateTotal);
+
             if (rem) rem.addEventListener('click', () => {
                 div.remove();
                 updateIndices();
@@ -223,8 +247,8 @@
 
         document.getElementById('add-ticket-btn').addEventListener('click', () => {
             if (!currentEventId) return alert('Select a ticket type first');
-            const ids = getSelectedTicketIds();
-            const avail = allTickets.filter(t => t.event_id == currentEventId && !ids.includes(String(t.id)));
+            const selectedIds = getSelectedTicketIds();
+            const avail = allTickets.filter(t => t.event_id == currentEventId && !selectedIds.includes(String(t.id)));
             if (avail.length === 0) return alert('No more ticket types for this event');
 
             const t = avail[0];
@@ -235,7 +259,7 @@
                     <div>
                         <label class="block text-sm font-medium mb-2">Ticket</label>
                         <select name="tickets[${ticketIndex}][ticket_id]" class="ticket-select w-full px-4 py-3 bg-white rounded-xl shadow-inner" required>
-                            ${allTickets.filter(tu => tu.event_id == currentEventId && !ids.includes(String(tu.id))).map(tu => `<option value="${tu.id}" data-price="${tu.price}" data-event-id="${tu.event_id}">${tu.label}</option>`).join('')}
+                            ${allTickets.filter(tu => tu.event_id == currentEventId && !selectedIds.includes(String(tu.id))).map(tu => `<option value="${tu.id}" data-price="${tu.price}" data-event-id="${tu.event_id}">${tu.label}</option>`).join('')}
                         </select>
                     </div>
                     <div>
@@ -258,13 +282,12 @@
             updateTotal();
         });
 
-        document.querySelectorAll('.ticket-select')[0]?.dispatchEvent(new Event('change'));
         setTimeout(() => {
             setCurrentEvent();
             restrictSelectOptions();
             updateAddButtonState();
+            updateTotal();
         }, 0);
-        updateTotal();
     });
 </script>
 @endsection
