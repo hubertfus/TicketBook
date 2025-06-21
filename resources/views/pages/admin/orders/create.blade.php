@@ -158,9 +158,45 @@
             });
         }
 
+        function updateSelectOptions() {
+            const selectedIds = getSelectedTicketIds();
+            const selects = document.querySelectorAll('.ticket-select');
+            const isFirstSelect = (select) => select.closest('.ticket-item') === document.querySelector('.ticket-item');
+            const hasMultipleTickets = selects.length > 1;
+
+            selects.forEach(currentSelect => {
+                const currentValue = currentSelect.value;
+                const isFirst = isFirstSelect(currentSelect);
+
+                Array.from(currentSelect.options).forEach(opt => {
+                    const ticketId = opt.value;
+                    const eventId = opt.getAttribute('data-event-id');
+
+                    if (isFirst) {
+                        const isSelectedElsewhere = selectedIds.includes(ticketId) && ticketId !== currentValue;
+                        const isDifferentEvent = hasMultipleTickets && currentEventId && eventId !== currentEventId;
+
+                        opt.disabled = isSelectedElsewhere || isDifferentEvent;
+                        opt.style.display = isSelectedElsewhere ? 'none' : '';
+                    } else {
+                        const isSelectedElsewhere = selectedIds.includes(ticketId) && ticketId !== currentValue;
+                        const isDifferentEvent = currentEventId && eventId !== currentEventId;
+
+                        opt.disabled = isSelectedElsewhere || isDifferentEvent;
+                        opt.style.display = isSelectedElsewhere ? 'none' : '';
+                    }
+                });
+            });
+        }
+
         function updateAddButtonState() {
             const btn = document.getElementById('add-ticket-btn');
-            const available = allTickets.filter(t => t.eventId === currentEventId && !getSelectedTicketIds().includes(t.id));
+            const selectedIds = getSelectedTicketIds();
+            const available = allTickets.filter(t =>
+                t.eventId === currentEventId &&
+                !selectedIds.includes(t.id)
+            );
+
             btn.disabled = !currentEventId || available.length === 0;
             btn.title = !currentEventId
                 ? 'Select a ticket type to enable'
@@ -169,26 +205,31 @@
                     : '';
         }
 
-        function restrictSelectOptions() {
-            const selects = document.querySelectorAll('.ticket-select');
-            const isSingle = selects.length === 1;
-            selects.forEach(sel => {
-                Array.from(sel.options).forEach(opt => {
-                    const ev = opt.getAttribute('data-event-id');
-                    opt.disabled = !isSingle && ev !== currentEventId;
-                });
-            });
-        }
-
         function onTicketChange(e) {
             const sel = e.target;
-            if (hasMultipleEvents()) {
+            const isFirstSelect = sel.closest('.ticket-item') === document.querySelector('.ticket-item');
+            const hasMultipleTickets = document.querySelectorAll('.ticket-select').length > 1;
+
+            if (isFirstSelect && sel.value && !hasMultipleTickets) {
+                const selectedOption = sel.options[sel.selectedIndex];
+                const newEventId = selectedOption.getAttribute('data-event-id');
+                currentEventId = newEventId;
+            } else if (isFirstSelect && hasMultipleTickets) {
+                const selectedOption = sel.options[sel.selectedIndex];
+                const newEventId = selectedOption.getAttribute('data-event-id');
+                if (currentEventId && newEventId !== currentEventId) {
+                    alert('Cannot change event when other tickets are already selected.');
+                    sel.value = sel.querySelector(`option[data-event-id="${currentEventId}"]`)?.value || '';
+                    return;
+                }
+                currentEventId = newEventId;
+            } else if (!isFirstSelect && hasMultipleEvents()) {
                 alert('All tickets must belong to the same event.');
                 sel.value = '';
                 return;
             }
-            setCurrentEvent();
-            restrictSelectOptions();
+
+            updateSelectOptions();
             setPriceFromSelect(sel);
             updateAddButtonState();
             updateTotal();
@@ -202,18 +243,30 @@
 
         function removeTicket(button) {
             const ticketItem = button.closest('.ticket-item');
+            const isFirstItem = ticketItem === document.querySelector('.ticket-item');
+
+            if (isFirstItem) {
+                alert('Cannot remove the first ticket item.');
+                return;
+            }
+
             ticketItem.remove();
             updateTicketIndexes();
             setCurrentEvent();
-            restrictSelectOptions();
+            updateSelectOptions();
             updateAddButtonState();
             updateTotal();
         }
 
         function addTicketItem() {
             if (!currentEventId) return alert('Select a ticket type first.');
+
             const selectedIds = getSelectedTicketIds();
-            const available = allTickets.filter(t => t.eventId === currentEventId && !selectedIds.includes(t.id));
+            const available = allTickets.filter(t =>
+                t.eventId === currentEventId &&
+                !selectedIds.includes(t.id)
+            );
+
             if (available.length === 0) return alert('No more ticket types available for this event.');
 
             const ticket = available[0];
@@ -225,9 +278,10 @@
                     <div>
                         <label class="block text-sm font-medium text-[#3A4454] mb-2">Ticket</label>
                         <select name="tickets[${ticketIndex}][ticket_id]" class="ticket-select w-full px-4 py-3 bg-white rounded-xl shadow-inner" required>
+                            <option value="">Select a ticket...</option>
                             ${allTickets
                                 .filter(t => t.eventId === currentEventId && !selectedIds.includes(t.id))
-                                .map(t => `<option value="${t.id}" data-price="${t.price}" data-event-id="${t.eventId}" ${t.id == ticket.id ? 'selected' : ''}>${t.text}</option>`)
+                                .map(t => `<option value="${t.id}" data-price="${t.price}" data-event-id="${t.eventId}">${t.text}</option>`)
                                 .join('')}
                         </select>
                     </div>
@@ -237,7 +291,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-[#3A4454] mb-2">Unit Price (PLN)</label>
-                        <input type="number" name="tickets[${ticketIndex}][unit_price]" step="0.01" value="${ticket.price}" class="ticket-price w-full px-4 py-3 bg-white rounded-xl shadow-inner" required />
+                        <input type="number" name="tickets[${ticketIndex}][unit_price]" step="0.01" value="0" class="ticket-price w-full px-4 py-3 bg-white rounded-xl shadow-inner" required />
                     </div>
                 </div>
                 <button type="button" class="remove-ticket absolute top-2 right-2 text-red-500 hover:text-red-700">
@@ -259,7 +313,7 @@
 
             ticketIndex++;
             updateTicketIndexes();
-            restrictSelectOptions();
+            updateSelectOptions();
             updateAddButtonState();
             updateTotal();
         }
@@ -271,8 +325,15 @@
 
         document.getElementById('add-ticket-btn').addEventListener('click', addTicketItem);
 
-        setCurrentEvent();
-        restrictSelectOptions();
+        const firstSelect = document.querySelector('.ticket-select');
+        if (firstSelect && firstSelect.value) {
+            const firstOption = firstSelect.options[firstSelect.selectedIndex];
+            currentEventId = firstOption.getAttribute('data-event-id');
+        } else {
+            setCurrentEvent();
+        }
+
+        updateSelectOptions();
         updateAddButtonState();
         updateTotal();
     });
