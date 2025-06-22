@@ -19,11 +19,11 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             EventsTableSeeder::class,
             TicketsTableSeeder::class,
-            OrdersTableSeeder::class,
-            OrderItemsTableSeeder::class,
             FavoritesTableSeeder::class,
             ReviewsTableSeeder::class,
             RefundsTableSeeder::class,
+            OrdersTableSeeder::class,
+            OrderItemsTableSeeder::class,
         ]);
 
         User::factory()->create([
